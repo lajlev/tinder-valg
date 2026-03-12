@@ -12,9 +12,17 @@ function hasApiKey() {
   return !!getApiKey();
 }
 
-async function callOpenAI(messages, temperature = 0.9) {
+async function callOpenAI(messages, temperature = 0.9, jsonMode = false) {
   const key = getApiKey();
   if (!key) throw new Error('Ingen API-nøgle');
+
+  const body = {
+    model: 'gpt-4o-mini',
+    messages,
+    temperature,
+    max_tokens: 10000
+  };
+  if (jsonMode) body.response_format = { type: 'json_object' };
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -22,12 +30,7 @@ async function callOpenAI(messages, temperature = 0.9) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${key}`
     },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages,
-      temperature,
-      max_tokens: 4000
-    })
+    body: JSON.stringify(body)
   });
 
   if (!res.ok) {
@@ -68,14 +71,18 @@ Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
 
 Scoring skal realistisk afspejle partiernes faktiske holdninger. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
 
-  const result = await callOpenAI([{ role: 'user', content: prompt }]);
+  const result = await callOpenAI([
+    { role: 'system', content: 'Du returnerer altid valid JSON.' },
+    { role: 'user', content: prompt }
+  ], 0.9, true);
 
-  // Parse JSON - strip potential markdown fences
+  // Parse JSON - handle both array and wrapped object
   const cleaned = result.replace(/```json?\n?/g, '').replace(/```\n?/g, '').trim();
-  const dilemmas = JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+  const dilemmas = Array.isArray(parsed) ? parsed : (parsed.dilemmas || parsed.data || Object.values(parsed)[0]);
 
   if (!Array.isArray(dilemmas) || dilemmas.length < 20) {
-    throw new Error('Ugyldigt format fra API');
+    throw new Error(`Ugyldigt format fra API (fik ${Array.isArray(dilemmas) ? dilemmas.length : 0} dilemmaer)`);
   }
 
   return dilemmas;

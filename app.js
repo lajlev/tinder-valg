@@ -355,7 +355,7 @@ function shareResult() {
   const text = `${c.emoji} Jeg fik ${pct}% match med ${c.name} (${c.party}) på Valg Tinder 26! Hvem er du?`;
 
   if (navigator.share) {
-    navigator.share({ title: 'Valg Tinder 26', text });
+    navigator.share({ title: 'Valg Tinder 26', text }).catch(() => {});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
       const msg = document.getElementById('shareMsg');
