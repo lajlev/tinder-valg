@@ -9,6 +9,9 @@
 </head>
 <body>
 
+<!-- Sound toggle -->
+<button id="soundToggle" onclick="toggleSound()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-gray-800/80 border border-gray-700 flex items-center justify-center text-lg hover:bg-gray-700 transition-colors" title="Lyd til/fra">🔇</button>
+
 <!-- SPLASH -->
 <div id="splash" class="screen active flex-col items-center justify-center text-center px-6">
   <div class="mb-8">
@@ -21,6 +24,12 @@
   </button>
   <div class="mt-5">
     <span id="aiBadge" class="ai-badge hidden">AI-dilemmaer aktive</span>
+    <div id="aiPromo" class="mt-3 max-w-xs mx-auto">
+      <button onclick="openSettings()" class="group bg-gradient-to-r from-purple-900/40 to-red-900/40 border border-purple-500/30 hover:border-purple-400/50 rounded-xl px-4 py-3 transition-all">
+        <div class="text-sm font-bold text-purple-300 group-hover:text-purple-200">✨ Tilføj OpenAI-nøgle</div>
+        <div class="text-xs text-gray-400 mt-0.5">Få unikke AI-dilemmaer og personlig analyse hver gang</div>
+      </button>
+    </div>
   </div>
   <p class="text-gray-500 text-base mt-4 font-semibold">Swipe venstre eller højre</p>
   <div class="flex gap-4 mt-3">
@@ -136,6 +145,22 @@
   </div>
 </div>
 
+<!-- CACHED DILEMMAS MODAL -->
+<div id="cachedModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-sm text-center">
+    <h2 class="text-xl font-bold mb-2">Du har gemte dilemmaer</h2>
+    <p class="text-sm text-gray-400 mb-5">Vil du bruge dine tidligere AI-dilemmaer eller generere helt nye?</p>
+    <div class="flex flex-col gap-3">
+      <button onclick="useCachedDilemmas()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
+        Brug gemte dilemmaer
+      </button>
+      <button onclick="generateNewDilemmas()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
+        Generér nye med AI
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- HOW IT WORKS MODAL -->
 <div id="howItWorksModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
   <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto">
@@ -180,6 +205,7 @@
 
 <script src="data.js"></script>
 <script src="api.js"></script>
+<script src="audio.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

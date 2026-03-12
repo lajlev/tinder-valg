@@ -62,12 +62,16 @@ Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
     "category": "Emne A vs. Emne B",
     "optionA": "Kort konkret forslag (max 10 ord)",
     "optionB": "Kort konkret forslag (max 10 ord)",
+    "argumentA": "Dramatisk/sjovt argument for A (1-2 sætninger, overdrevet og underholdende)",
+    "argumentB": "Dramatisk/sjovt argument for B (1-2 sætninger, overdrevet og underholdende)",
     "scoring": {
       "optionA": {"PARTIKODE": point_1_til_10, ...},
       "optionB": {"PARTIKODE": point_1_til_10, ...}
     }
   }
 ]
+
+Argumenterne skal være dramatiserede, sjove og overdrevne — tænk clickbait møder standup. De skal overtale brugeren til at vælge den pågældende mulighed.
 
 Scoring skal realistisk afspejle partiernes faktiske holdninger. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
 

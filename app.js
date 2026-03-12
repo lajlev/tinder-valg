@@ -11,30 +11,73 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
+function getCachedDilemmas() {
+  try {
+    const stored = localStorage.getItem('cached_dilemmas');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed) && parsed.length >= 20) return parsed;
+  } catch (e) {}
+  return null;
+}
+
+function saveDilemmasToCache(d) {
+  try { localStorage.setItem('cached_dilemmas', JSON.stringify(d)); } catch (e) {}
+}
+
+let pendingStartResolve = null;
+
 async function startGame() {
   currentIndex = 0;
   Object.keys(candidates).forEach(p => scores[p] = 0);
 
-  // Try to generate AI dilemmas if API key is set
   if (hasApiKey()) {
-    showScreen('generating');
-    startGenAnimations();
-    try {
-      dilemmas = await generateDilemmas();
-    } catch (e) {
-      console.warn('AI generation failed, using fallback:', e.message);
-      document.getElementById('genError').textContent = `AI fejlede: ${e.message}. Bruger standard-dilemmaer.`;
-      document.getElementById('genError').classList.remove('hidden');
-      await new Promise(r => setTimeout(r, 2000));
-      dilemmas = [...fallbackDilemmas];
+    const cached = getCachedDilemmas();
+    if (cached) {
+      // Show choice modal
+      document.getElementById('cachedModal').classList.remove('hidden');
+      const useNew = await new Promise(r => { pendingStartResolve = r; });
+      document.getElementById('cachedModal').classList.add('hidden');
+
+      if (!useNew) {
+        dilemmas = cached;
+      } else {
+        await fetchAIDilemmas();
+      }
+    } else {
+      await fetchAIDilemmas();
     }
-    stopGenAnimations();
   } else {
     dilemmas = [...fallbackDilemmas];
   }
 
   showScreen('game');
+  playStartSound();
   renderCard();
+}
+
+function useCachedDilemmas() {
+  if (pendingStartResolve) { pendingStartResolve(false); pendingStartResolve = null; }
+}
+
+function generateNewDilemmas() {
+  if (pendingStartResolve) { pendingStartResolve(true); pendingStartResolve = null; }
+}
+
+async function fetchAIDilemmas() {
+  showScreen('generating');
+  startGenAnimations();
+  try {
+    dilemmas = await generateDilemmas();
+    saveDilemmasToCache(dilemmas);
+  } catch (e) {
+    console.warn('AI generation failed, using fallback:', e.message);
+    document.getElementById('genError').textContent = `AI fejlede: ${e.message}. Bruger standard-dilemmaer.`;
+    document.getElementById('genError').classList.remove('hidden');
+    await new Promise(r => setTimeout(r, 2000));
+    dilemmas = [...fallbackDilemmas];
+  }
+  stopGenAnimations();
 }
 
 function renderCard() {
@@ -54,11 +97,13 @@ function renderCard() {
           <div class="flex-1 text-left">
             <div class="text-xs uppercase tracking-wider text-red-400/70 mb-2 font-extrabold">← Valg A</div>
             <p class="text-lg font-extrabold leading-snug">${d.optionA}</p>
+            ${d.argumentA ? `<p class="text-sm text-gray-400 mt-2 leading-snug italic">${d.argumentA}</p>` : ''}
           </div>
           <div class="w-px bg-gray-600/50 self-stretch"></div>
           <div class="flex-1 text-right">
             <div class="text-xs uppercase tracking-wider text-blue-400/70 mb-2 font-extrabold">Valg B →</div>
             <p class="text-lg font-extrabold leading-snug">${d.optionB}</p>
+            ${d.argumentB ? `<p class="text-sm text-gray-400 mt-2 leading-snug italic">${d.argumentB}</p>` : ''}
           </div>
         </div>
       </div>
@@ -67,6 +112,7 @@ function renderCard() {
   document.getElementById('progressText').textContent = `${currentIndex + 1} / ${dilemmas.length}`;
   document.getElementById('categoryText').textContent = d.category;
   document.getElementById('progressBar').style.width = `${((currentIndex + 1) / dilemmas.length) * 100}%`;
+  playCardAppear();
   setupSwipe();
 }
 
@@ -255,8 +301,10 @@ function swipeAway(choice) {
   const card = document.getElementById('currentCard');
   if (!card) return;
 
-  // Fire the crazy effects!
+  // Fire the crazy effects + sound!
   playCrazyEffects(choice);
+  playSwipeSound(choice);
+  playExplosionSound();
 
   const dir = choice === 'B' ? 1 : -1;
   card.classList.add('animating');
@@ -305,6 +353,7 @@ async function showResults() {
   }
 
   showScreen('results');
+  playResultFanfare();
   const list = document.getElementById('resultsList');
   list.innerHTML = top5.map(([party, score], i) => {
     const c = candidates[party];
@@ -391,10 +440,11 @@ function saveSettings() {
 }
 
 function updateKeyStatus() {
+  const hasKey = hasApiKey();
   const badge = document.getElementById('aiBadge');
-  if (badge) {
-    badge.classList.toggle('hidden', !hasApiKey());
-  }
+  const promo = document.getElementById('aiPromo');
+  if (badge) badge.classList.toggle('hidden', !hasKey);
+  if (promo) promo.classList.toggle('hidden', hasKey);
 }
 
 // === GENERATING SCREEN ANIMATIONS ===
@@ -413,8 +463,10 @@ const genFacts = [
 ];
 let genFactInterval = null;
 let genParticleInterval = null;
+let genSoundLoop = null;
 
 function startGenAnimations() {
+  genSoundLoop = playGeneratingLoop();
   // Rotating fun facts
   let factIdx = 0;
   const factEl = document.getElementById('genFact');
@@ -454,6 +506,7 @@ function startGenAnimations() {
 }
 
 function stopGenAnimations() {
+  stopGeneratingLoop(genSoundLoop); genSoundLoop = null;
   if (genFactInterval) { clearInterval(genFactInterval); genFactInterval = null; }
   if (genParticleInterval) { clearInterval(genParticleInterval); genParticleInterval = null; }
   const container = document.getElementById('genBgParticles');
@@ -472,4 +525,7 @@ function closeHowItWorks() {
 }
 
 // Init
-document.addEventListener('DOMContentLoaded', updateKeyStatus);
+document.addEventListener('DOMContentLoaded', () => {
+  updateKeyStatus();
+  initSound();
+});
