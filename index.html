@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Valg Tinder 26</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="screen active flex-col items-center justify-center text-center px-6">
+  <div class="mb-8">
+    <div class="text-7xl sm:text-8xl font-black tracking-tight mb-2" style="letter-spacing:-0.04em">VALG<span class="text-red-500">TINDER</span></div>
+    <div class="text-2xl text-gray-400 font-extrabold tracking-widest">26</div>
+  </div>
+  <p class="text-2xl text-gray-300 mb-10 max-w-sm leading-relaxed font-bold">25 swipes til dit kryds.<br>Er du klar?</p>
+  <button onclick="startGame()" class="bg-red-600 hover:bg-red-700 text-white text-2xl font-extrabold py-5 px-14 rounded-2xl transition-all active:scale-95 tracking-wide">
+    START
+  </button>
+  <div class="mt-5">
+    <span id="aiBadge" class="ai-badge hidden">AI-dilemmaer aktive</span>
+  </div>
+  <p class="text-gray-500 text-base mt-4 font-semibold">Swipe venstre eller højre</p>
+  <div class="flex gap-4 mt-3">
+    <button onclick="openHowItWorks()" class="text-gray-600 hover:text-gray-400 text-sm underline transition-colors font-bold">
+      Hvordan virker det?
+    </button>
+    <button onclick="openSettings()" class="text-gray-600 hover:text-gray-400 text-sm underline transition-colors font-bold">
+      Indstillinger
+    </button>
+  </div>
+</div>
+
+<!-- GENERATING (AI) -->
+<div id="generating" class="screen flex-col items-center justify-center text-center px-6">
+  <div class="spinner"></div>
+  <div class="text-2xl font-extrabold text-gray-300">Genererer dilemmaer med AI...</div>
+  <div class="text-gray-500 mt-2 text-lg font-semibold">Dette tager 5-10 sekunder</div>
+  <div id="genError" class="text-red-400 text-sm mt-4 hidden"></div>
+</div>
+
+<!-- GAME -->
+<div id="game" class="screen flex-col items-center">
+  <div class="w-full px-4 pt-4 pb-2">
+    <div class="flex justify-between text-base font-bold text-gray-400 mb-1">
+      <span id="progressText">1 / 25</span>
+      <span id="categoryText" class="text-gray-500"></span>
+    </div>
+    <div class="w-full bg-gray-800 rounded-full h-1">
+      <div id="progressBar" class="progress-bar" style="width: 4%"></div>
+    </div>
+  </div>
+  <div class="flex-1 w-full max-w-md mx-auto px-4 flex items-center justify-center relative" id="cardContainer"></div>
+  <div class="w-full max-w-md mx-auto px-4 pb-6 flex gap-3">
+    <button onclick="choose('A')" class="btn-option bg-transparent text-red-400 border-red-500/50 hover:bg-red-500/20">
+      ← Valg A
+    </button>
+    <button onclick="choose('B')" class="btn-option bg-transparent text-blue-400 border-blue-500/50 hover:bg-blue-500/20">
+      Valg B →
+    </button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="screen flex-col items-center justify-center text-center px-6">
+  <div class="spinner"></div>
+  <div class="text-2xl font-extrabold text-gray-300">Beregner dit match...</div>
+  <div class="text-gray-500 mt-2 text-lg font-semibold">Analyserer dine valg</div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen flex-col items-center px-4 py-8">
+  <div class="text-4xl sm:text-5xl font-black mb-2 text-center" style="letter-spacing:-0.03em">Dit <span class="text-red-500">Valg</span>match</div>
+  <p class="text-gray-400 mb-6 text-center text-base font-semibold">Baseret på dine valg</p>
+  <div id="resultsList" class="w-full max-w-md space-y-3"></div>
+  <div id="aiAnalysis" class="w-full max-w-md"></div>
+  <div class="flex gap-3 w-full max-w-md mt-6">
+    <button onclick="shareResult()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
+      Del dit resultat
+    </button>
+    <button onclick="restart()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
+      Prøv igen
+    </button>
+  </div>
+  <div id="shareMsg" class="text-green-400 text-sm mt-3 opacity-0 transition-opacity">Kopieret til udklipsholder!</div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
+    <h2 class="text-xl font-bold mb-4">Indstillinger</h2>
+    <label class="text-sm text-gray-400 block mb-2">OpenAI API-nøgle</label>
+    <input id="apiKeyInput" type="password" placeholder="sk-..."
+      class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white text-sm mb-2 focus:outline-none focus:border-red-500">
+    <p class="text-xs text-gray-500 mb-4">Nøglen gemmes kun lokalt i din browser. Med en nøgle genererer AI'en unikke dilemmaer og en personlig analyse.</p>
+    <div class="flex gap-3">
+      <button onclick="saveSettings()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition-all">Gem</button>
+      <button onclick="closeSettings()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2.5 rounded-lg transition-all">Annuller</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS MODAL -->
+<div id="howItWorksModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto">
+    <h2 class="text-2xl font-extrabold mb-4">Hvordan virker det?</h2>
+
+    <div class="space-y-4 text-gray-300 text-base leading-relaxed">
+      <div>
+        <h3 class="text-lg font-extrabold text-white mb-1">Dilemmaerne</h3>
+        <p>Du bliver stillet 25 dilemmaer, hvor du skal vælge mellem to <strong>forskellige</strong> politiske prioriteringer. Det er ikke for eller imod det samme emne &mdash; du vælger hvad der er <strong>vigtigst for dig</strong>.</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-extrabold text-white mb-1">Scoring</h3>
+        <p>Hvert valg giver point til de partier, der typisk støtter den pågældende politik. Pointene er baseret på partiernes kendte holdninger (skala 1-10).</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-extrabold text-white mb-1">11 partier</h3>
+        <p>Dine valg sammenlignes med: Socialdemokratiet, Venstre, Moderaterne, SF, Liberal Alliance, Konservative, Enhedslisten, Radikale Venstre, Dansk Folkeparti, Danmarksdemokraterne og Alternativet.</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-extrabold text-white mb-1">Dit resultat</h3>
+        <p>Efter 25 swipes tælles alle point sammen pr. parti. De 5 partier med flest point vises med deres spidskandidat og en match-procent. Procenten er relativ til dit bedste match (= 100%).</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-extrabold text-white mb-1">AI-tilstand</h3>
+        <p>Har du en OpenAI API-nøgle? Så genererer en AI 25 helt unikke dilemmaer hver gang, og du får en personlig analyse af din politiske profil til sidst.</p>
+      </div>
+
+      <div class="bg-gray-800/60 rounded-xl p-4 text-sm text-gray-400">
+        <strong class="text-gray-300">Bemærk:</strong> Appen er lavet til underholdning og giver ikke en videnskabelig analyse. Brug den som inspiration &mdash; ikke som stemmeseddel!
+      </div>
+    </div>
+
+    <button onclick="closeHowItWorks()" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl mt-5 transition-all active:scale-95 text-lg">
+      Forstået!
+    </button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

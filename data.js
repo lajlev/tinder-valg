@@ -1,0 +1,41 @@
+const candidates = {
+  S:   { name: "Mette Frederiksen", party: "Socialdemokratiet", color: "#c0392b", emoji: "🌹" },
+  V:   { name: "Troels Lund Poulsen", party: "Venstre", color: "#0054a6", emoji: "🔵" },
+  M:   { name: "Lars Løkke Rasmussen", party: "Moderaterne", color: "#6b21a8", emoji: "🟣" },
+  SF:  { name: "Pia Olsen Dyhr", party: "SF", color: "#e4007c", emoji: "🩷" },
+  LA:  { name: "Alex Vanopslagh", party: "Liberal Alliance", color: "#13505b", emoji: "🏛️" },
+  K:   { name: "Søren Pape Poulsen", party: "Konservative", color: "#00583c", emoji: "🌲" },
+  EL:  { name: "Pelle Dragsted", party: "Enhedslisten", color: "#e6801a", emoji: "✊" },
+  R:   { name: "Martin Lidegaard", party: "Radikale Venstre", color: "#733280", emoji: "💜" },
+  DF:  { name: "Morten Messerschmidt", party: "Dansk Folkeparti", color: "#c8b400", emoji: "🇩🇰" },
+  DD:  { name: "Inger Støjberg", party: "Danmarksdemokraterne", color: "#00446b", emoji: "⚡" },
+  ALT: { name: "Franciska Rosenkilde", party: "Alternativet", color: "#00ff7f", emoji: "🌿" }
+};
+
+const fallbackDilemmas = [
+  { id: 1, category: "Energi vs. Forsvar", optionA: "Byg 2 danske atomkraftværker nu", optionB: "12 måneders værnepligt for alle", scoring: { optionA: { LA: 10, K: 8, DD: 6, V: 5, M: 4 }, optionB: { K: 9, V: 8, S: 7, DF: 8, DD: 8, M: 6 } } },
+  { id: 2, category: "Skat vs. Klima", optionA: "Sænk topskatten med 10 procentpoint", optionB: "CO2-afgift på alle forbrugsvarer", scoring: { optionA: { LA: 10, K: 8, V: 7, DD: 4, M: 3 }, optionB: { ALT: 10, SF: 9, EL: 8, R: 7, S: 4 } } },
+  { id: 3, category: "Sundhed vs. Uddannelse", optionA: "Gratis tandlæge for alle under 30", optionB: "Fordob SU'en de næste 5 år", scoring: { optionA: { S: 9, SF: 8, EL: 8, R: 5 }, optionB: { EL: 9, ALT: 8, SF: 7, R: 8, S: 5 } } },
+  { id: 4, category: "Landbrug vs. Natur", optionA: "Halvér den danske kvægproduktion", optionB: "Giv landmænd frie hænder til at producere", scoring: { optionA: { ALT: 10, EL: 9, SF: 8, R: 6 }, optionB: { V: 10, LA: 8, DD: 7, DF: 7, K: 5 } } },
+  { id: 5, category: "Grænser vs. Velfærd", optionA: "Luk grænsen for ikke-vestlig indvandring i 5 år", optionB: "1.000 flere sygeplejersker i det offentlige", scoring: { optionA: { DF: 10, DD: 10, K: 6, S: 5, V: 4 }, optionB: { S: 10, SF: 9, EL: 8, R: 5, ALT: 6 } } },
+  { id: 6, category: "Privat vs. Offentlig", optionA: "Flere private hospitaler med frit valg", optionB: "Nationaliser alle energiselskaber", scoring: { optionA: { LA: 10, K: 8, V: 8, DD: 5, M: 5 }, optionB: { EL: 10, SF: 7, ALT: 6 } } },
+  { id: 7, category: "Bolig vs. Transport", optionA: "Byg 50.000 almene boliger på 5 år", optionB: "Gratis offentlig transport i hele Danmark", scoring: { optionA: { S: 9, SF: 8, EL: 10, R: 5 }, optionB: { ALT: 10, SF: 9, EL: 8, R: 7, M: 3 } } },
+  { id: 8, category: "Forsvar vs. Bistand", optionA: "Brug 3% af BNP på forsvaret", optionB: "Brug pengene på humanitær bistand i stedet", scoring: { optionA: { K: 10, V: 8, DD: 8, DF: 7, LA: 6, M: 5 }, optionB: { EL: 10, ALT: 9, SF: 6, R: 7 } } },
+  { id: 9, category: "Pension vs. Iværksætteri", optionA: "Ret til tidlig pension fra 60 for nedslidte", optionB: "Nul skat de første 3 år for nye virksomheder", scoring: { optionA: { S: 10, DF: 9, DD: 8, SF: 8, EL: 9 }, optionB: { LA: 10, K: 7, V: 8, M: 5 } } },
+  { id: 10, category: "EU vs. Suverænitet", optionA: "Danmark skal ind i EU's forsvarsunion", optionB: "Folkeafstemning om at forlade EU", scoring: { optionA: { R: 10, M: 8, V: 6, S: 5, K: 5 }, optionB: { DF: 10, DD: 8, EL: 6 } } },
+  { id: 11, category: "Straf vs. Forebyggelse", optionA: "Fordobl straffene for bandekriminalitet", optionB: "Invester 5 mia. i udsatte boligområder", scoring: { optionA: { DF: 10, DD: 9, K: 8, V: 6, S: 5, LA: 5 }, optionB: { EL: 10, ALT: 9, R: 8, SF: 7, S: 4 } } },
+  { id: 12, category: "Overvågning vs. Frihed", optionA: "Ansigtsgenkendelse på alle stationer", optionB: "Forbyd statens adgang til borgernes data", scoring: { optionA: { S: 7, K: 7, DF: 6, DD: 6, V: 4 }, optionB: { LA: 10, EL: 9, ALT: 8, R: 8, SF: 5 } } },
+  { id: 13, category: "Kultur vs. Marked", optionA: "Fordobl kunststøtten og DR's budget", optionB: "Halvér DR og lad markedet bestemme", scoring: { optionA: { SF: 10, ALT: 10, EL: 8, R: 8, S: 6 }, optionB: { LA: 10, K: 6, V: 5, DD: 5, DF: 4 } } },
+  { id: 14, category: "By vs. Land", optionA: "Flyt 10.000 statslige jobs ud af København", optionB: "Saml alt i storbyerne for effektivitet", scoring: { optionA: { DD: 10, DF: 9, V: 8, S: 6, K: 5 }, optionB: { R: 6, LA: 5, ALT: 4, M: 5, SF: 3 } } },
+  { id: 15, category: "Kirke vs. Stat", optionA: "Bevar folkekirkens særstatus i grundloven", optionB: "Total adskillelse af kirke og stat", scoring: { optionA: { DF: 10, K: 8, DD: 7, V: 5, S: 4 }, optionB: { R: 10, EL: 9, ALT: 8, LA: 7, SF: 5, M: 4 } } },
+  { id: 16, category: "Cannabis vs. Kontrol", optionA: "Legalisér og beskat cannabis", optionB: "Strengere straf for alle stoffer", scoring: { optionA: { ALT: 10, EL: 9, R: 8, LA: 7, SF: 5 }, optionB: { DF: 8, DD: 7, K: 7, S: 6, V: 5 } } },
+  { id: 17, category: "Erhverv vs. Arbejder", optionA: "Sænk selskabsskatten til 15%", optionB: "6. ferieuge til alle lønmodtagere", scoring: { optionA: { LA: 10, K: 8, V: 8, M: 5 }, optionB: { EL: 10, SF: 9, S: 7, ALT: 7, R: 5 } } },
+  { id: 18, category: "Skole vs. Trivsel", optionA: "Nationale test fra 1. klasse", optionB: "Afskaf alle karakterer til og med 8. klasse", scoring: { optionA: { K: 8, V: 6, LA: 5, DF: 5, DD: 5 }, optionB: { ALT: 10, SF: 9, EL: 8, R: 8, S: 4 } } },
+  { id: 19, category: "Ejendom vs. Fællesskab", optionA: "Frit salg af dansk jord til udlandet", optionB: "Statens forkøbsret på al landbrugsjord", scoring: { optionA: { LA: 8, M: 5, V: 4 }, optionB: { EL: 10, DF: 8, DD: 7, SF: 6, S: 6, ALT: 5 } } },
+  { id: 20, category: "Dagpenge vs. Vækst", optionA: "Skær dagpengene med 20%", optionB: "Gratis efteruddannelse til alle ledige", scoring: { optionA: { LA: 10, K: 7, V: 6, DD: 4 }, optionB: { S: 9, EL: 8, SF: 8, R: 7, ALT: 6 } } },
+  { id: 21, category: "Flygtninge vs. Nærområder", optionA: "Tag 5.000 kvoteflygtninge om året", optionB: "Send alle midler til nærområderne", scoring: { optionA: { R: 10, EL: 10, ALT: 9, SF: 7 }, optionB: { DF: 10, DD: 10, S: 7, K: 7, V: 7, LA: 5, M: 5 } } },
+  { id: 22, category: "Borgerløn vs. Arbejdspligt", optionA: "Indfør borgerløn på 10.000 kr./md.", optionB: "Krav om 37 timers aktivitet for kontanthjælp", scoring: { optionA: { ALT: 10, EL: 8, R: 5, SF: 4 }, optionB: { V: 8, LA: 7, K: 7, DD: 7, DF: 6, S: 5 } } },
+  { id: 23, category: "Motorvej vs. Natur", optionA: "Ny motorvej tværs gennem Jylland", optionB: "Gør 20% af Danmark til vild natur", scoring: { optionA: { V: 8, DD: 7, DF: 6, K: 6, LA: 5 }, optionB: { ALT: 10, SF: 9, EL: 8, R: 7, M: 4 } } },
+  { id: 24, category: "Atomkraft vs. Velfærd", optionA: "Brug 100 mia. på atomkraft", optionB: "Brug 100 mia. på psykiatrien", scoring: { optionA: { LA: 10, K: 8, V: 5, DD: 5 }, optionB: { S: 9, SF: 10, EL: 9, R: 7, ALT: 6, M: 4 } } },
+  { id: 25, category: "Kongerige vs. Republik", optionA: "Bevar monarkiet som det er", optionB: "Danmark skal være en republik", scoring: { optionA: { K: 10, DF: 9, V: 7, S: 6, DD: 6, M: 5 }, optionB: { EL: 10, ALT: 8, R: 5, SF: 4, LA: 3 } } }
+];

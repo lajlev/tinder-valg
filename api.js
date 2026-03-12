@@ -1,0 +1,98 @@
+// OpenAI API integration for generating dilemmas and result analysis
+
+function getApiKey() {
+  return localStorage.getItem('openai_api_key') || '';
+}
+
+function saveApiKey(key) {
+  localStorage.setItem('openai_api_key', key);
+}
+
+function hasApiKey() {
+  return !!getApiKey();
+}
+
+async function callOpenAI(messages, temperature = 0.9) {
+  const key = getApiKey();
+  if (!key) throw new Error('Ingen API-nøgle');
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages,
+      temperature,
+      max_tokens: 4000
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API fejl: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+async function generateDilemmas() {
+  const partyList = Object.entries(candidates)
+    .map(([code, c]) => `${code}: ${c.party} (${c.name})`)
+    .join(', ');
+
+  const prompt = `Du er ekspert i dansk politik. Generér 25 politiske dilemmaer til en "Valg Tinder"-app for det danske valg 2026.
+
+VIGTIGT: Hvert dilemma skal sætte to FORSKELLIGE politiske emner op mod hinanden (kryds-dilemma). Brugeren vælger hvad der er vigtigst. F.eks. "Byg atomkraftværker" vs "12 måneders værnepligt" - IKKE to sider af samme sag.
+
+Dæk bredt: klima, skat, forsvar, sundhed, uddannelse, udlændinge, bolig, transport, EU, retspolitik, kultur, digitalisering, landdistrikter, værdipolitik, arbejdsmarked.
+
+Danske partier: ${partyList}
+
+Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
+[
+  {
+    "id": 1,
+    "category": "Emne A vs. Emne B",
+    "optionA": "Kort konkret forslag (max 10 ord)",
+    "optionB": "Kort konkret forslag (max 10 ord)",
+    "scoring": {
+      "optionA": {"PARTIKODE": point_1_til_10, ...},
+      "optionB": {"PARTIKODE": point_1_til_10, ...}
+    }
+  }
+]
+
+Scoring skal realistisk afspejle partiernes faktiske holdninger. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
+
+  const result = await callOpenAI([{ role: 'user', content: prompt }]);
+
+  // Parse JSON - strip potential markdown fences
+  const cleaned = result.replace(/```json?\n?/g, '').replace(/```\n?/g, '').trim();
+  const dilemmas = JSON.parse(cleaned);
+
+  if (!Array.isArray(dilemmas) || dilemmas.length < 20) {
+    throw new Error('Ugyldigt format fra API');
+  }
+
+  return dilemmas;
+}
+
+async function generateResultAnalysis(top5, userChoices) {
+  const top5Text = top5.map(([party, score], i) => {
+    const c = candidates[party];
+    return `${i + 1}. ${c.name} (${c.party}) - ${score} point`;
+  }).join('\n');
+
+  const prompt = `En bruger har gennemført "Valg Tinder 26" - en dansk politisk quiz med 25 dilemmaer.
+
+Resultater:
+${top5Text}
+
+Skriv en kort, personlig analyse (3-4 sætninger, på dansk) af brugerens politiske profil. Vær konkret om hvilke værdier der driver dem. Undgå at være nedladende. Brug en engagerende tone.`;
+
+  return await callOpenAI([{ role: 'user', content: prompt }], 0.7);
+}
