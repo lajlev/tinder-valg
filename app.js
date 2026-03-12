@@ -18,6 +18,7 @@ async function startGame() {
   // Try to generate AI dilemmas if API key is set
   if (hasApiKey()) {
     showScreen('generating');
+    startGenAnimations();
     try {
       dilemmas = await generateDilemmas();
     } catch (e) {
@@ -27,6 +28,7 @@ async function startGame() {
       await new Promise(r => setTimeout(r, 2000));
       dilemmas = [...fallbackDilemmas];
     }
+    stopGenAnimations();
   } else {
     dilemmas = [...fallbackDilemmas];
   }
@@ -394,6 +396,71 @@ function updateKeyStatus() {
     badge.classList.toggle('hidden', !hasApiKey());
   }
 }
+
+// === GENERATING SCREEN ANIMATIONS ===
+
+const genFacts = [
+  "Mixer politik og kaos...",
+  "Konsulterer partierne...",
+  "Opfinder vilde dilemmaer...",
+  "Tjekker Christiansborg...",
+  "Analyserer valgløfter...",
+  "Ryster posen godt...",
+  "Finder de svære valg...",
+  "Kalibrerer demokratiet...",
+  "Forbereder dine 25 swipes...",
+  "Bager friske dilemmaer..."
+];
+let genFactInterval = null;
+let genParticleInterval = null;
+
+function startGenAnimations() {
+  // Rotating fun facts
+  let factIdx = 0;
+  const factEl = document.getElementById('genFact');
+  if (factEl) {
+    factEl.textContent = genFacts[0];
+    genFactInterval = setInterval(() => {
+      factIdx = (factIdx + 1) % genFacts.length;
+      factEl.style.opacity = '0';
+      setTimeout(() => {
+        factEl.textContent = genFacts[factIdx];
+        factEl.style.opacity = '';
+      }, 300);
+    }, 3000);
+  }
+
+  // Floating background particles
+  const container = document.getElementById('genBgParticles');
+  if (container) {
+    container.innerHTML = '';
+    genParticleInterval = setInterval(() => {
+      const p = document.createElement('div');
+      p.className = 'gen-bg-particle';
+      const size = randomBetween(3, 8);
+      const colors = ['#ef4444', '#3b82f6', '#a855f7', '#22c55e', '#eab308', '#fff'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.cssText = `
+        left: ${randomBetween(5, 95)}%;
+        width: ${size}px; height: ${size}px;
+        background: ${color};
+        animation-duration: ${randomBetween(3, 7)}s;
+        animation-delay: ${randomBetween(0, 0.5)}s;
+      `;
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 8000);
+    }, 200);
+  }
+}
+
+function stopGenAnimations() {
+  if (genFactInterval) { clearInterval(genFactInterval); genFactInterval = null; }
+  if (genParticleInterval) { clearInterval(genParticleInterval); genParticleInterval = null; }
+  const container = document.getElementById('genBgParticles');
+  if (container) container.innerHTML = '';
+}
+
+// === END GENERATING ANIMATIONS ===
 
 // How it works modal
 function openHowItWorks() {

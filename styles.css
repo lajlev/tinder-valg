@@ -134,6 +134,122 @@ body { font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff; over
   100% { opacity: 0; transform: scaleY(0.5); }
 }
 
+/* === GENERATING SCREEN === */
+
+.gen-bg-particles {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.gen-bg-particle {
+  position: absolute; border-radius: 50%; opacity: 0;
+  animation: genFloat linear infinite;
+}
+@keyframes genFloat {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+}
+
+/* Brain */
+.gen-orbit-container {
+  position: relative; width: 200px; height: 200px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gen-brain {
+  font-size: 4.5rem; z-index: 2; position: relative;
+  animation: genBrainBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(239,68,68,0.4));
+}
+@keyframes genBrainBounce {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-3deg); }
+  50% { transform: scale(1) rotate(0deg); }
+  75% { transform: scale(1.1) rotate(3deg); }
+}
+
+/* Pulse rings behind brain */
+.gen-pulse-ring {
+  position: absolute; inset: -20px; border-radius: 50%;
+  border: 2px solid rgba(239,68,68,0.3);
+  animation: genPulseRing 2s ease-out infinite;
+}
+.gen-pulse-ring-2 {
+  animation-delay: 1s;
+}
+@keyframes genPulseRing {
+  0% { transform: scale(0.5); opacity: 0.8; border-width: 3px; }
+  100% { transform: scale(2.5); opacity: 0; border-width: 1px; }
+}
+
+/* Orbiting icons */
+.gen-orbit-ring {
+  position: absolute; inset: 0; animation: genOrbitSpin linear infinite;
+}
+.gen-orbit-ring-1 { animation-duration: 6s; }
+.gen-orbit-ring-2 { animation-duration: 9s; animation-direction: reverse; inset: -30px; }
+
+@keyframes genOrbitSpin {
+  to { transform: rotate(360deg); }
+}
+
+.gen-orbit-icon {
+  position: absolute; font-size: 1.6rem;
+  left: 50%; top: 50%;
+  --angle: calc(var(--i) * 90deg);
+  transform: rotate(var(--angle)) translateY(-70px) rotate(calc(-1 * var(--angle)));
+  animation: genIconPop 0.6s ease-out backwards;
+  animation-delay: calc(var(--i) * 0.15s);
+}
+.gen-orbit-ring-2 .gen-orbit-icon {
+  --angle: calc(var(--i) * 72deg);
+  transform: rotate(var(--angle)) translateY(-95px) rotate(calc(-1 * var(--angle)));
+  font-size: 1.3rem;
+}
+@keyframes genIconPop {
+  from { transform: rotate(var(--angle)) translateY(0) scale(0); opacity: 0; }
+}
+
+/* Glowing text */
+.gen-text-glow {
+  animation: genTextGlow 2s ease-in-out infinite alternate;
+}
+@keyframes genTextGlow {
+  from { text-shadow: 0 0 5px transparent; }
+  to { text-shadow: 0 0 20px rgba(239,68,68,0.4), 0 0 40px rgba(239,68,68,0.15); }
+}
+
+/* Progress dots */
+.gen-dots {
+  display: flex; gap: 8px; justify-content: center;
+}
+.gen-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #333;
+  animation: genDotPulse 2.5s ease-in-out infinite;
+}
+.gen-dot:nth-child(1) { animation-delay: 0s; }
+.gen-dot:nth-child(2) { animation-delay: 0.3s; }
+.gen-dot:nth-child(3) { animation-delay: 0.6s; }
+.gen-dot:nth-child(4) { animation-delay: 0.9s; }
+.gen-dot:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes genDotPulse {
+  0%, 60%, 100% { background: #333; transform: scale(1); }
+  30% { background: #ef4444; transform: scale(1.5); box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+}
+
+/* Rotating facts */
+.gen-fact {
+  animation: genFactFade 3s ease-in-out infinite;
+  min-height: 1.5em;
+}
+@keyframes genFactFade {
+  0%, 100% { opacity: 0.5; transform: translateY(2px); }
+  50% { opacity: 1; transform: translateY(0); }
+}
+
+/* === END GENERATING === */
+
 .ai-badge {
   display: inline-flex; align-items: center; gap: 0.25rem;
   background: rgba(239,68,68,0.15); color: #ef4444;

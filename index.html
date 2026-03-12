@@ -34,10 +34,44 @@
 </div>
 
 <!-- GENERATING (AI) -->
-<div id="generating" class="screen flex-col items-center justify-center text-center px-6">
-  <div class="spinner"></div>
-  <div class="text-2xl font-extrabold text-gray-300">Genererer dilemmaer med AI...</div>
-  <div class="text-gray-500 mt-2 text-lg font-semibold">Dette tager 5-10 sekunder</div>
+<div id="generating" class="screen flex-col items-center justify-center text-center px-6 overflow-hidden">
+  <!-- Floating background particles -->
+  <div class="gen-bg-particles" id="genBgParticles"></div>
+
+  <!-- Brain with orbiting icons -->
+  <div class="gen-orbit-container">
+    <div class="gen-orbit-ring gen-orbit-ring-1">
+      <span class="gen-orbit-icon" style="--i:0">🗳️</span>
+      <span class="gen-orbit-icon" style="--i:1">⚡</span>
+      <span class="gen-orbit-icon" style="--i:2">🔥</span>
+      <span class="gen-orbit-icon" style="--i:3">💎</span>
+    </div>
+    <div class="gen-orbit-ring gen-orbit-ring-2">
+      <span class="gen-orbit-icon" style="--i:0">🏛️</span>
+      <span class="gen-orbit-icon" style="--i:1">🌍</span>
+      <span class="gen-orbit-icon" style="--i:2">💰</span>
+      <span class="gen-orbit-icon" style="--i:3">🛡️</span>
+      <span class="gen-orbit-icon" style="--i:4">🌿</span>
+    </div>
+    <div class="gen-brain">🧠</div>
+    <div class="gen-pulse-ring"></div>
+    <div class="gen-pulse-ring gen-pulse-ring-2"></div>
+  </div>
+
+  <div class="text-2xl font-extrabold text-gray-300 mt-6 gen-text-glow">Genererer dilemmaer med AI...</div>
+
+  <!-- Animated progress dots -->
+  <div class="gen-dots mt-3">
+    <span class="gen-dot"></span>
+    <span class="gen-dot"></span>
+    <span class="gen-dot"></span>
+    <span class="gen-dot"></span>
+    <span class="gen-dot"></span>
+  </div>
+
+  <!-- Rotating fun facts -->
+  <div class="text-gray-500 mt-4 text-base font-semibold gen-fact" id="genFact">Mixer politik og kaos...</div>
+
   <div id="genError" class="text-red-400 text-sm mt-4 hidden"></div>
 </div>
 
