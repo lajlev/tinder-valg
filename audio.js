@@ -23,7 +23,16 @@ function updateSoundIcon() {
   if (btn) btn.textContent = soundEnabled ? '🔊' : '🔇';
 }
 
+function canPlaySound() {
+  return !!(window.AudioContext || window.webkitAudioContext);
+}
+
 function initSound() {
+  const btn = document.getElementById('soundToggle');
+  if (!canPlaySound()) {
+    if (btn) btn.style.display = 'none';
+    return;
+  }
   soundEnabled = localStorage.getItem('sound_enabled') === '1';
   updateSoundIcon();
 }

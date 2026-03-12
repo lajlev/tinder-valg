@@ -42,10 +42,21 @@ async function callOpenAI(messages, temperature = 0.9, jsonMode = false) {
   return data.choices[0].message.content;
 }
 
+function buildPartyPositionsContext() {
+  return Object.entries(partyPositions).map(([code, p]) => {
+    const positions = Object.entries(p.positions)
+      .map(([topic, stance]) => `  ${topic}: ${stance}`)
+      .join('\n');
+    return `${code} (${p.name}):\n${positions}`;
+  }).join('\n\n');
+}
+
 async function generateDilemmas() {
   const partyList = Object.entries(candidates)
     .map(([code, c]) => `${code}: ${c.party} (${c.name})`)
     .join(', ');
+
+  const positionsContext = buildPartyPositionsContext();
 
   const prompt = `Du er ekspert i dansk politik. Generér 25 politiske dilemmaer til en "Valg Tinder"-app for det danske valg 2026.
 
@@ -54,6 +65,12 @@ VIGTIGT: Hvert dilemma skal sætte to FORSKELLIGE politiske emner op mod hinande
 Dæk bredt: klima, skat, forsvar, sundhed, uddannelse, udlændinge, bolig, transport, EU, retspolitik, kultur, digitalisering, landdistrikter, værdipolitik, arbejdsmarked.
 
 Danske partier: ${partyList}
+
+=== PARTIERNES FAKTISKE HOLDNINGER (brug dette som grundlag for scoring) ===
+${positionsContext}
+=== SLUT PÅ HOLDNINGER ===
+
+KRITISK VIGTIGT FOR SCORING: Du SKAL basere al scoring på partiernes faktiske holdninger ovenfor. Giv IKKE point til et parti for en position de ikke støtter. Tjek hver scoring mod de dokumenterede holdninger. Scoring skal afspejle hvor stærkt partiet reelt bakker op om det pågældende forslag baseret på deres kendte politik.
 
 Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
 [
@@ -73,7 +90,7 @@ Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
 
 Argumenterne skal være dramatiserede, sjove og overdrevne — tænk clickbait møder standup. De skal overtale brugeren til at vælge den pågældende mulighed.
 
-Scoring skal realistisk afspejle partiernes faktiske holdninger. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
+Scoring skal realistisk afspejle partiernes faktiske holdninger fra listen ovenfor. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
 
   const result = await callOpenAI([
     { role: 'system', content: 'Du returnerer altid valid JSON.' },

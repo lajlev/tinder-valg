@@ -23,12 +23,12 @@ body {
 .card-inner {
   background: linear-gradient(145deg, #1a1a2e, #16213e);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 1.5rem; padding: 1.25rem; min-height: 280px;
+  border-radius: 1.5rem; padding: 1.5rem; min-height: 50vh;
   display: flex; flex-direction: column; justify-content: center;
   position: relative; overflow: hidden;
 }
 @media (min-width: 400px) {
-  .card-inner { padding: 2rem; min-height: 340px; }
+  .card-inner { padding: 2rem; min-height: 55vh; }
 }
 .overlay-a, .overlay-b {
   position: absolute; inset: 0; border-radius: 1.5rem;
@@ -58,13 +58,13 @@ body {
   50% { opacity: 1; }
 }
 .btn-option {
-  flex: 1; padding: 0.85rem 1rem; border-radius: 1rem; font-weight: 800;
-  font-size: 1rem; transition: transform 0.1s, background 0.1s; cursor: pointer;
+  flex: 1; padding: 1rem 1.25rem; border-radius: 1rem; font-weight: 800;
+  font-size: 1.15rem; transition: transform 0.1s, background 0.1s; cursor: pointer;
   border: 2px solid; text-align: center; letter-spacing: 0.02em;
-  min-height: 48px;
+  min-height: 56px;
 }
 @media (min-width: 400px) {
-  .btn-option { padding: 1rem 1.25rem; font-size: 1.1rem; }
+  .btn-option { padding: 1.15rem 1.5rem; font-size: 1.25rem; }
 }
 .btn-option:active { transform: scale(0.95); }
 
@@ -272,6 +272,27 @@ body {
   border-radius: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;
 }
 
+/* Agree splash message */
+.agree-splash {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  background: #111; border: 3px solid currentColor;
+  border-radius: 1.25rem; padding: 1.25rem 2rem;
+  font-size: 1.5rem; font-weight: 800; white-space: nowrap;
+  z-index: 50; pointer-events: none;
+  animation: agreePop 1.8s ease-out forwards;
+  text-shadow: 0 0 15px currentColor;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6), 0 0 15px currentColor;
+  letter-spacing: 0.01em;
+}
+@keyframes agreePop {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  15% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  25% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  75% { transform: translate(-50%, -60%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -80%) scale(0.9); opacity: 0; }
+}
+
 /* === MOBILE OPTIMIZATIONS === */
 
 /* Splash title: fits any screen width */
@@ -305,7 +326,7 @@ body {
 
 /* Card text scaling for short screens */
 @media (max-height: 667px) {
-  .card-inner { min-height: 220px; padding: 1rem; }
+  .card-inner { min-height: 40vh; padding: 1.25rem; }
 }
 
 /* Modals: respect safe areas and small screens */

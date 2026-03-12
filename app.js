@@ -92,18 +92,18 @@ function renderCard() {
       <div class="card-inner">
         <div class="overlay-a" id="overlayA">← VALG A</div>
         <div class="overlay-b" id="overlayB">VALG B →</div>
-        <div class="text-xs sm:text-sm font-extrabold text-red-400 uppercase tracking-widest mb-3 sm:mb-5">${d.category}</div>
-        <div class="flex gap-3 sm:gap-5 items-stretch">
+        <div class="text-base sm:text-lg font-extrabold text-red-400 uppercase tracking-widest mb-4 sm:mb-6 text-center">${d.category}</div>
+        <div class="flex gap-4 sm:gap-6 items-stretch">
           <div class="flex-1 text-left min-w-0">
-            <div class="text-xs uppercase tracking-wider text-red-400/70 mb-1.5 sm:mb-2 font-extrabold">← Valg A</div>
-            <p class="text-base sm:text-lg font-extrabold leading-snug">${d.optionA}</p>
-            ${d.argumentA ? `<p class="text-xs sm:text-sm text-gray-400 mt-1.5 sm:mt-2 leading-snug italic">${d.argumentA}</p>` : ''}
+            <div class="text-sm uppercase tracking-wider text-red-400/70 mb-2 font-extrabold">← Valg A</div>
+            <p class="text-xl sm:text-2xl font-extrabold leading-snug">${d.optionA}</p>
+            ${d.argumentA ? `<p class="text-base sm:text-lg text-gray-400 mt-2 sm:mt-3 leading-snug italic">${d.argumentA}</p>` : ''}
           </div>
           <div class="w-px bg-gray-600/50 self-stretch flex-shrink-0"></div>
           <div class="flex-1 text-right min-w-0">
-            <div class="text-xs uppercase tracking-wider text-blue-400/70 mb-1.5 sm:mb-2 font-extrabold">Valg B →</div>
-            <p class="text-base sm:text-lg font-extrabold leading-snug">${d.optionB}</p>
-            ${d.argumentB ? `<p class="text-xs sm:text-sm text-gray-400 mt-1.5 sm:mt-2 leading-snug italic">${d.argumentB}</p>` : ''}
+            <div class="text-sm uppercase tracking-wider text-blue-400/70 mb-2 font-extrabold">Valg B →</div>
+            <p class="text-xl sm:text-2xl font-extrabold leading-snug">${d.optionB}</p>
+            ${d.argumentB ? `<p class="text-base sm:text-lg text-gray-400 mt-2 sm:mt-3 leading-snug italic">${d.argumentB}</p>` : ''}
           </div>
         </div>
       </div>
@@ -298,6 +298,24 @@ function playCrazyEffects(choice) {
 
 // === END CRAZY EFFECTS ===
 
+function getTopCandidateForChoice(dilemma, choice) {
+  const key = choice === 'A' ? 'optionA' : 'optionB';
+  const s = dilemma.scoring[key];
+  if (!s) return null;
+  const top = Object.entries(s).sort((a, b) => b[1] - a[1])[0];
+  if (!top) return null;
+  return candidates[top[0]];
+}
+
+function showAgreeSplash(candidate) {
+  const el = document.createElement('div');
+  el.className = 'agree-splash';
+  el.innerHTML = `${candidate.emoji} <strong>${candidate.name}</strong> er enig med dig!`;
+  el.style.color = candidate.color;
+  document.getElementById('game').appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
 function swipeAway(choice) {
   const card = document.getElementById('currentCard');
   if (!card) return;
@@ -307,16 +325,22 @@ function swipeAway(choice) {
   playSwipeSound(choice);
   playExplosionSound();
 
+  const d = dilemmas[currentIndex];
+  const topCandidate = getTopCandidateForChoice(d, choice);
+
   const dir = choice === 'B' ? 1 : -1;
   card.classList.add('animating');
   card.style.transform = `translateX(${dir * 500}px) rotate(${dir * 30}deg)`;
   card.style.opacity = '0';
 
-  const d = dilemmas[currentIndex];
   const key = choice === 'A' ? 'optionA' : 'optionB';
   const s = d.scoring[key];
   if (s) {
     Object.entries(s).forEach(([party, pts]) => { scores[party] = (scores[party] || 0) + pts; });
+  }
+
+  if (topCandidate) {
+    setTimeout(() => showAgreeSplash(topCandidate), 200);
   }
 
   currentIndex++;
