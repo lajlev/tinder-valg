@@ -2,7 +2,10 @@
 <html lang="da">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Valg Tinder 26</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="styles.css">
@@ -14,25 +17,25 @@
 
 <!-- SPLASH -->
 <div id="splash" class="screen active flex-col items-center justify-center text-center px-6">
-  <div class="mb-8">
-    <div class="text-7xl sm:text-8xl font-black tracking-tight mb-2" style="letter-spacing:-0.04em">VALG<span class="text-red-500">TINDER</span></div>
-    <div class="text-2xl text-gray-400 font-extrabold tracking-widest">26</div>
+  <div class="mb-4 sm:mb-8">
+    <div class="splash-title font-black tracking-tight mb-1" style="letter-spacing:-0.04em">VALG<span class="text-red-500">TINDER</span></div>
+    <div class="text-lg sm:text-2xl text-gray-400 font-extrabold tracking-widest">26</div>
   </div>
-  <p class="text-2xl text-gray-300 mb-10 max-w-sm leading-relaxed font-bold">25 swipes til dit kryds.<br>Er du klar?</p>
-  <button onclick="startGame()" class="bg-red-600 hover:bg-red-700 text-white text-2xl font-extrabold py-5 px-14 rounded-2xl transition-all active:scale-95 tracking-wide">
+  <p class="text-lg sm:text-2xl text-gray-300 mb-6 sm:mb-10 max-w-sm leading-relaxed font-bold px-2">25 swipes til dit kryds.<br>Er du klar?</p>
+  <button onclick="startGame()" class="bg-red-600 hover:bg-red-700 text-white text-xl sm:text-2xl font-extrabold py-4 sm:py-5 px-10 sm:px-14 rounded-2xl transition-all active:scale-95 tracking-wide">
     START
   </button>
-  <div class="mt-5">
+  <div class="mt-3 sm:mt-5">
     <span id="aiBadge" class="ai-badge hidden">AI-dilemmaer aktive</span>
-    <div id="aiPromo" class="mt-3 max-w-xs mx-auto">
-      <button onclick="openSettings()" class="group bg-gradient-to-r from-purple-900/40 to-red-900/40 border border-purple-500/30 hover:border-purple-400/50 rounded-xl px-4 py-3 transition-all">
-        <div class="text-sm font-bold text-purple-300 group-hover:text-purple-200">✨ Tilføj OpenAI-nøgle</div>
-        <div class="text-xs text-gray-400 mt-0.5">Få unikke AI-dilemmaer og personlig analyse hver gang</div>
+    <div id="aiPromo" class="mt-2 sm:mt-3 max-w-xs mx-auto px-4">
+      <button onclick="openSettings()" class="group w-full bg-gradient-to-r from-purple-900/40 to-red-900/40 border border-purple-500/30 hover:border-purple-400/50 rounded-xl px-4 py-2.5 transition-all">
+        <div class="text-sm font-bold text-purple-300 group-hover:text-purple-200">Tilføj OpenAI-nøgle</div>
+        <div class="text-xs text-gray-400 mt-0.5">Unikke AI-dilemmaer og personlig analyse</div>
       </button>
     </div>
   </div>
-  <p class="text-gray-500 text-base mt-4 font-semibold">Swipe venstre eller højre</p>
-  <div class="flex gap-4 mt-3">
+  <p class="text-gray-500 text-sm sm:text-base mt-3 font-semibold">Swipe venstre eller højre</p>
+  <div class="flex gap-4 mt-2">
     <button onclick="openHowItWorks()" class="text-gray-600 hover:text-gray-400 text-sm underline transition-colors font-bold">
       Hvordan virker det?
     </button>
@@ -96,11 +99,11 @@
     </div>
   </div>
   <div class="flex-1 w-full max-w-md mx-auto px-4 flex items-center justify-center relative" id="cardContainer"></div>
-  <div class="w-full max-w-md mx-auto px-4 pb-6 flex gap-3">
-    <button onclick="choose('A')" class="btn-option bg-transparent text-red-400 border-red-500/50 hover:bg-red-500/20">
+  <div class="w-full max-w-md mx-auto px-4 pb-4 flex gap-3">
+    <button onclick="choose('A')" class="btn-option bg-transparent text-red-400 border-red-500/50 hover:bg-red-500/20 active:bg-red-500/30">
       ← Valg A
     </button>
-    <button onclick="choose('B')" class="btn-option bg-transparent text-blue-400 border-blue-500/50 hover:bg-blue-500/20">
+    <button onclick="choose('B')" class="btn-option bg-transparent text-blue-400 border-blue-500/50 hover:bg-blue-500/20 active:bg-blue-500/30">
       Valg B →
     </button>
   </div>

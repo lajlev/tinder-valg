@@ -92,18 +92,18 @@ function renderCard() {
       <div class="card-inner">
         <div class="overlay-a" id="overlayA">← VALG A</div>
         <div class="overlay-b" id="overlayB">VALG B →</div>
-        <div class="text-sm font-extrabold text-red-400 uppercase tracking-widest mb-5">${d.category}</div>
-        <div class="flex gap-5 items-stretch">
-          <div class="flex-1 text-left">
-            <div class="text-xs uppercase tracking-wider text-red-400/70 mb-2 font-extrabold">← Valg A</div>
-            <p class="text-lg font-extrabold leading-snug">${d.optionA}</p>
-            ${d.argumentA ? `<p class="text-sm text-gray-400 mt-2 leading-snug italic">${d.argumentA}</p>` : ''}
+        <div class="text-xs sm:text-sm font-extrabold text-red-400 uppercase tracking-widest mb-3 sm:mb-5">${d.category}</div>
+        <div class="flex gap-3 sm:gap-5 items-stretch">
+          <div class="flex-1 text-left min-w-0">
+            <div class="text-xs uppercase tracking-wider text-red-400/70 mb-1.5 sm:mb-2 font-extrabold">← Valg A</div>
+            <p class="text-base sm:text-lg font-extrabold leading-snug">${d.optionA}</p>
+            ${d.argumentA ? `<p class="text-xs sm:text-sm text-gray-400 mt-1.5 sm:mt-2 leading-snug italic">${d.argumentA}</p>` : ''}
           </div>
-          <div class="w-px bg-gray-600/50 self-stretch"></div>
-          <div class="flex-1 text-right">
-            <div class="text-xs uppercase tracking-wider text-blue-400/70 mb-2 font-extrabold">Valg B →</div>
-            <p class="text-lg font-extrabold leading-snug">${d.optionB}</p>
-            ${d.argumentB ? `<p class="text-sm text-gray-400 mt-2 leading-snug italic">${d.argumentB}</p>` : ''}
+          <div class="w-px bg-gray-600/50 self-stretch flex-shrink-0"></div>
+          <div class="flex-1 text-right min-w-0">
+            <div class="text-xs uppercase tracking-wider text-blue-400/70 mb-1.5 sm:mb-2 font-extrabold">Valg B →</div>
+            <p class="text-base sm:text-lg font-extrabold leading-snug">${d.optionB}</p>
+            ${d.argumentB ? `<p class="text-xs sm:text-sm text-gray-400 mt-1.5 sm:mt-2 leading-snug italic">${d.argumentB}</p>` : ''}
           </div>
         </div>
       </div>
@@ -154,8 +154,9 @@ function setupSwipe() {
     onStart(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
   card.addEventListener('touchmove', e => {
+    if (isDragging) e.preventDefault();
     onMove(e.touches[0].clientX);
-  }, { passive: true });
+  }, { passive: false });
   card.addEventListener('touchend', onEnd);
 
   card.addEventListener('mousedown', e => {
@@ -362,16 +363,16 @@ async function showResults() {
     const isTop = i === 0;
     return `
       <div class="candidate-card ${isTop ? 'ring-2 ring-red-500' : ''}" style="animation-delay: ${delay}s">
-        <div class="flex items-center gap-4">
-          <div class="text-4xl">${c.emoji}</div>
-          <div class="flex-1">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <div class="text-3xl sm:text-4xl">${c.emoji}</div>
+          <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              ${isTop ? '<span class="text-sm bg-red-600 text-white px-3 py-1 rounded-full font-extrabold tracking-wide">BEDSTE MATCH</span>' : ''}
+              ${isTop ? '<span class="text-xs sm:text-sm bg-red-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-extrabold tracking-wide">BEDSTE MATCH</span>' : ''}
             </div>
-            <div class="font-extrabold text-xl">${c.name}</div>
-            <div class="text-base text-gray-400 font-semibold">${c.party}</div>
+            <div class="font-extrabold text-lg sm:text-xl truncate">${c.name}</div>
+            <div class="text-sm sm:text-base text-gray-400 font-semibold">${c.party}</div>
           </div>
-          <div class="text-3xl font-black" style="color: ${c.color}">${pct}%</div>
+          <div class="text-2xl sm:text-3xl font-black flex-shrink-0" style="color: ${c.color}">${pct}%</div>
         </div>
         <div class="match-bar mt-3">
           <div class="match-fill" style="width: ${pct}%; background: ${c.color};"></div>

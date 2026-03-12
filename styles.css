@@ -1,7 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff; overflow-x: hidden; min-height: 100dvh; font-size: 18px; }
+html { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff;
+  overflow-x: hidden; overflow-y: auto; height: 100%;
+  font-size: 16px; -webkit-text-size-adjust: 100%;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overscroll-behavior: none;
+}
+@media (min-width: 400px) { body { font-size: 18px; } }
 .screen { display: none; min-height: 100dvh; }
 .screen.active { display: flex; }
 
@@ -15,9 +23,12 @@ body { font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff; over
 .card-inner {
   background: linear-gradient(145deg, #1a1a2e, #16213e);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 1.5rem; padding: 2rem; min-height: 340px;
+  border-radius: 1.5rem; padding: 1.25rem; min-height: 280px;
   display: flex; flex-direction: column; justify-content: center;
   position: relative; overflow: hidden;
+}
+@media (min-width: 400px) {
+  .card-inner { padding: 2rem; min-height: 340px; }
 }
 .overlay-a, .overlay-b {
   position: absolute; inset: 0; border-radius: 1.5rem;
@@ -47,9 +58,13 @@ body { font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff; over
   50% { opacity: 1; }
 }
 .btn-option {
-  flex: 1; padding: 1rem 1.25rem; border-radius: 1rem; font-weight: 800;
-  font-size: 1.1rem; transition: transform 0.1s, background 0.1s; cursor: pointer;
+  flex: 1; padding: 0.85rem 1rem; border-radius: 1rem; font-weight: 800;
+  font-size: 1rem; transition: transform 0.1s, background 0.1s; cursor: pointer;
   border: 2px solid; text-align: center; letter-spacing: 0.02em;
+  min-height: 48px;
+}
+@media (min-width: 400px) {
+  .btn-option { padding: 1rem 1.25rem; font-size: 1.1rem; }
 }
 .btn-option:active { transform: scale(0.95); }
 
@@ -255,4 +270,46 @@ body { font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff; over
   background: rgba(239,68,68,0.15); color: #ef4444;
   font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.5rem;
   border-radius: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* === MOBILE OPTIMIZATIONS === */
+
+/* Splash title: fits any screen width */
+.splash-title {
+  font-size: clamp(2.5rem, 12vw, 6rem);
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Prevent pull-to-refresh and overscroll bounce */
+.screen { overscroll-behavior: none; touch-action: pan-y; }
+#game { overflow: hidden; touch-action: none; }
+
+/* Game screen layout: fill viewport properly */
+#game { max-height: 100dvh; }
+#game .flex-1 { min-height: 0; }
+
+/* Bottom buttons safe area */
+#game > div:last-child {
+  padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+}
+
+/* Results screen: scrollable with safe area */
+#results {
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
+}
+
+/* Card text scaling for short screens */
+@media (max-height: 667px) {
+  .card-inner { min-height: 220px; padding: 1rem; }
+}
+
+/* Modals: respect safe areas and small screens */
+#settingsModal > div, #cachedModal > div, #howItWorksModal > div {
+  max-height: calc(100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
