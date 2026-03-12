@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; overflow: hidden; }
+html { height: 100%; }
 body {
   font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff;
   overflow-x: hidden; overflow-y: auto; height: 100%;
@@ -307,10 +307,10 @@ body {
 
 /* Prevent pull-to-refresh and overscroll bounce */
 .screen { overscroll-behavior: none; touch-action: pan-y; }
-#game { overflow: hidden; touch-action: none; }
+#game { overflow: hidden; touch-action: none; max-height: 100dvh; }
 
-/* Game screen layout: fill viewport properly */
-#game { max-height: 100dvh; }
+/* Results screen must scroll */
+#results { overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: auto; height: 100dvh; }
 #game .flex-1 { min-height: 0; }
 
 /* Bottom buttons safe area */
@@ -318,9 +318,8 @@ body {
   padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.5rem));
 }
 
-/* Results screen: scrollable with safe area */
+/* Results screen: safe area bottom */
 #results {
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
   padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
 }
 
