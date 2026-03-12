@@ -398,7 +398,7 @@ async function showResults() {
           </div>
           <div class="text-2xl sm:text-3xl font-black flex-shrink-0" style="color: ${c.color}">${pct}%</div>
         </div>
-        <div class="match-bar mt-3">
+        <div class="match-bar mt-2">
           <div class="match-fill" style="width: ${pct}%; background: ${c.color};"></div>
         </div>
       </div>
