@@ -1,5 +1,7 @@
 // OpenAI API integration for generating dilemmas and result analysis
 
+let partyDataCache = null;
+
 function getApiKey() {
   return localStorage.getItem('openai_api_key') || '';
 }
@@ -10,6 +12,14 @@ function saveApiKey(key) {
 
 function hasApiKey() {
   return !!getApiKey();
+}
+
+async function loadPartyData() {
+  if (partyDataCache) return partyDataCache;
+  const res = await fetch('data-2026.json');
+  if (!res.ok) throw new Error('Kunne ikke hente data-2026.json');
+  partyDataCache = await res.json();
+  return partyDataCache;
 }
 
 async function callOpenAI(messages, temperature = 0.9, jsonMode = false) {
@@ -42,40 +52,46 @@ async function callOpenAI(messages, temperature = 0.9, jsonMode = false) {
   return data.choices[0].message.content;
 }
 
-function buildPartyPositionsContext() {
-  return Object.entries(partyPositions).map(([code, p]) => {
-    const positions = Object.entries(p.positions)
-      .map(([topic, stance]) => `  ${topic}: ${stance}`)
-      .join('\n');
-    return `${code} (${p.name}):\n${positions}`;
-  }).join('\n\n');
-}
-
 async function generateDilemmas() {
-  const partyList = Object.entries(candidates)
-    .map(([code, c]) => `${code}: ${c.party} (${c.name})`)
+  const partyData = await loadPartyData();
+  const partyDataJson = JSON.stringify(partyData, null, 2);
+
+  const partyList = partyData.partier
+    .map(p => `${p.forkortelse}: ${p.navn} (${p.topkandidat})`)
     .join(', ');
 
-  const positionsContext = buildPartyPositionsContext();
+  const partyCodes = partyData.partier.map(p => p.forkortelse).join(', ');
 
   const prompt = `Du er ekspert i dansk politik. Generér 25 politiske dilemmaer til en "Valg Tinder"-app for det danske valg 2026.
 
-VIGTIGT: Hvert dilemma skal sætte to FORSKELLIGE politiske emner op mod hinanden (kryds-dilemma). Brugeren vælger hvad der er vigtigst. F.eks. "Byg atomkraftværker" vs "12 måneders værnepligt" - IKKE to sider af samme sag.
+VIGTIGT REGEL: Hvert dilemma skal ALTID sammenligne to forslag fra SAMME kategori:
+- "flere_penge_paa" vs "flere_penge_paa" — to ting vi kan INVESTERE mere i (f.eks. "Byg atomkraftværker" vs "Gratis tandlæge til alle")
+- "faerre_penge_paa" vs "faerre_penge_paa" — to ting vi kan SPARE/SKÆRE på (f.eks. "Halvér momsen på mad" vs "Sænk indkomstskatten")
+
+Bland ALDRIG kategorierne! Begge valgmuligheder skal enten handle om at bruge flere penge, eller om at spare/ændre afgifter.
+Lav ca. 13 "flere_penge_paa"-dilemmaer og ca. 12 "faerre_penge_paa"-dilemmaer.
 
 Dæk bredt: klima, skat, forsvar, sundhed, uddannelse, udlændinge, bolig, transport, EU, retspolitik, kultur, digitalisering, landdistrikter, værdipolitik, arbejdsmarked.
 
-Danske partier: ${partyList}
+Danske partier og topkandidater: ${partyList}
 
-=== PARTIERNES FAKTISKE HOLDNINGER (brug dette som grundlag for scoring) ===
-${positionsContext}
-=== SLUT PÅ HOLDNINGER ===
+Gyldige partikoder til scoring: ${partyCodes}
 
-KRITISK VIGTIGT FOR SCORING: Du SKAL basere al scoring på partiernes faktiske holdninger ovenfor. Giv IKKE point til et parti for en position de ikke støtter. Tjek hver scoring mod de dokumenterede holdninger. Scoring skal afspejle hvor stærkt partiet reelt bakker op om det pågældende forslag baseret på deres kendte politik.
+=== FAKTISKE PARTIDATA MED ØKONOMISKE ESTIMATER (brug dette som grundlag for scoring) ===
+${partyDataJson}
+=== SLUT PÅ PARTIDATA ===
+
+KRITISK VIGTIGT FOR SCORING:
+- Du SKAL basere al scoring på partiernes faktiske holdninger og økonomiske prioriteringer fra datasættet ovenfor.
+- Brug partiernes "flere_penge_paa" og "faerre_penge_paa" til at vurdere hvor stærkt de støtter hvert forslag.
+- Giv IKKE point til et parti for en position de ikke støtter.
+- Brug KUN de partikoder der er listet ovenfor (${partyCodes}).
 
 Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
 [
   {
     "id": 1,
+    "type": "flere_penge_paa",
     "category": "Emne A vs. Emne B",
     "optionA": "Kort konkret forslag (max 10 ord)",
     "optionB": "Kort konkret forslag (max 10 ord)",
@@ -90,7 +106,7 @@ Returnér KUN valid JSON (ingen markdown, ingen forklaring) i dette format:
 
 Argumenterne skal være dramatiserede, sjove og overdrevne — tænk clickbait møder standup. De skal overtale brugeren til at vælge den pågældende mulighed.
 
-Scoring skal realistisk afspejle partiernes faktiske holdninger fra listen ovenfor. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle 11 partier får point fordelt jævnt hen over de 25 dilemmaer.`;
+Scoring skal realistisk afspejle partiernes faktiske holdninger fra datasættet ovenfor. Brug point 1-10. Hvert valg skal have mindst 3 partier med point. Sørg for at alle ${partyData.partier.length} partier får point fordelt jævnt hen over de 25 dilemmaer.`;
 
   const result = await callOpenAI([
     { role: 'system', content: 'Du returnerer altid valid JSON.' },
