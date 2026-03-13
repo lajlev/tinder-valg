@@ -278,11 +278,11 @@ body {
   transform: translate(-50%, -50%) scale(0.5);
   background: #111; border: 3px solid currentColor;
   border-radius: 1.25rem; padding: 1.25rem 2rem;
-  font-size: 1.5rem; font-weight: 800; white-space: nowrap;
+  font-size: 1.1rem; font-weight: 800; white-space: normal; text-align: center; max-width: 90vw;
   z-index: 50; pointer-events: none;
   animation: agreePop 1.8s ease-out forwards;
-  text-shadow: 0 0 15px currentColor;
-  box-shadow: 0 0 30px rgba(0,0,0,0.6), 0 0 15px currentColor;
+  text-shadow: none;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
   letter-spacing: 0.01em;
 }
 @keyframes agreePop {

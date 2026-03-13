@@ -359,7 +359,10 @@
         }
         .policy-uncertainty {
             font-family: 'DM Mono', monospace;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            margin-top: 0.2rem;
+            text-align: right;
         }
 
         .policy-explanation {
@@ -856,11 +859,11 @@ function renderPolicyCard(p) {
                 </div>
                 <div style="flex:1; margin-left: 0.6rem">
                     <div class="policy-title">${p.emne}</div>
-                    <div class="policy-meta">
-                        <span class="policy-uncertainty">${{høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed}</span>
-                    </div>
                 </div>
-                <div class="policy-amount ${amountClass}">${amountLabel} mia.</div>
+                <div style="text-align: right; flex-shrink: 0;">
+                    <div class="policy-amount ${amountClass}">${amountLabel} mia.</div>
+                    <div class="policy-uncertainty">${{høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed}</div>
+                </div>
             </div>
             <div class="policy-explanation">${p.forklaring}</div>
         </div>

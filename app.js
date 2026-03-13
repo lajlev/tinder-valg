@@ -3,6 +3,7 @@ let currentIndex = 0;
 let scores = {};
 let topResult = null;
 let dilemmas = [];
+let userChoices = []; // track {dilemma, choice} for each swipe
 
 Object.keys(candidates).forEach(p => scores[p] = 0);
 
@@ -29,6 +30,7 @@ let pendingStartResolve = null;
 
 async function startGame() {
   currentIndex = 0;
+  userChoices = [];
   Object.keys(candidates).forEach(p => scores[p] = 0);
 
   if (hasApiKey()) {
@@ -298,20 +300,23 @@ function playCrazyEffects(choice) {
 
 // === END CRAZY EFFECTS ===
 
-function getTopCandidateForChoice(dilemma, choice) {
+function getTopCandidatesForChoice(dilemma, choice) {
   const key = choice === 'A' ? 'optionA' : 'optionB';
   const s = dilemma.scoring[key];
-  if (!s) return null;
-  const top = Object.entries(s).sort((a, b) => b[1] - a[1])[0];
-  if (!top) return null;
-  return candidates[top[0]];
+  if (!s) return [];
+  return Object.entries(s)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([code]) => candidates[code])
+    .filter(Boolean);
 }
 
-function showAgreeSplash(candidate) {
+function showAgreeSplash(topCandidates) {
   const el = document.createElement('div');
   el.className = 'agree-splash';
-  el.innerHTML = `${candidate.emoji} <strong>${candidate.name}</strong> er enig med dig!`;
-  el.style.color = candidate.color;
+  const names = topCandidates.map(c => `${c.emoji} ${c.name}`);
+  el.innerHTML = `<strong>${names.join(', ')}</strong> er enig${topCandidates.length > 1 ? 'e' : ''} med dig!`;
+  el.style.color = topCandidates[0].color;
   document.getElementById('game').appendChild(el);
   setTimeout(() => el.remove(), 1800);
 }
@@ -326,7 +331,7 @@ function swipeAway(choice) {
   playExplosionSound();
 
   const d = dilemmas[currentIndex];
-  const topCandidate = getTopCandidateForChoice(d, choice);
+  const topCandidates = getTopCandidatesForChoice(d, choice);
 
   const dir = choice === 'B' ? 1 : -1;
   card.classList.add('animating');
@@ -338,9 +343,10 @@ function swipeAway(choice) {
   if (s) {
     Object.entries(s).forEach(([party, pts]) => { scores[party] = (scores[party] || 0) + pts; });
   }
+  userChoices.push({ dilemma: d, choice, key });
 
-  if (topCandidate) {
-    setTimeout(() => showAgreeSplash(topCandidate), 200);
+  if (topCandidates.length > 0) {
+    setTimeout(() => showAgreeSplash(topCandidates), 200);
   }
 
   currentIndex++;
@@ -385,8 +391,25 @@ async function showResults() {
     const pct = Math.round((score / maxScore) * 100);
     const delay = i * 0.15;
     const isTop = i === 0;
+
+    // Find dilemmas where this party scored points from user's choices
+    const reasons = userChoices
+      .map(uc => {
+        const pts = uc.dilemma.scoring[uc.key]?.[party];
+        if (!pts) return null;
+        const chosenText = uc.key === 'optionA' ? uc.dilemma.optionA : uc.dilemma.optionB;
+        return { text: chosenText, pts };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.pts - a.pts)
+      .slice(0, 3);
+
+    const reasonsHtml = reasons.map(r =>
+      `<div class="flex items-start gap-2 text-sm text-gray-400"><span class="text-gray-600 mt-0.5">•</span><span>${r.text}</span></div>`
+    ).join('');
+
     return `
-      <div class="candidate-card ${isTop ? 'ring-2 ring-red-500' : ''}" style="animation-delay: ${delay}s">
+      <div class="candidate-card ${isTop ? 'ring-2 ring-red-500' : ''}" style="animation-delay: ${delay}s; cursor: pointer;" onclick="toggleMatchReasons(this)">
         <div class="flex items-center gap-3 sm:gap-4">
           <div class="text-3xl sm:text-4xl">${c.emoji}</div>
           <div class="flex-1 min-w-0">
@@ -394,12 +417,16 @@ async function showResults() {
               ${isTop ? '<span class="text-xs sm:text-sm bg-red-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-extrabold tracking-wide">BEDSTE MATCH</span>' : ''}
             </div>
             <div class="font-extrabold text-lg sm:text-xl truncate">${c.name}</div>
-            <div class="text-sm sm:text-base text-gray-400 font-semibold">${c.party}</div>
+            <div class="text-sm sm:text-base text-gray-400 font-semibold">${c.party} <span class="text-gray-600 text-xs ml-1">▼ tryk for detaljer</span></div>
           </div>
           <div class="text-2xl sm:text-3xl font-black flex-shrink-0" style="color: ${c.color}">${pct}%</div>
         </div>
         <div class="match-bar mt-2">
           <div class="match-fill" style="width: ${pct}%; background: ${c.color};"></div>
+        </div>
+        <div class="match-reasons hidden mt-3 space-y-1 border-t border-gray-700/50 pt-3">
+          <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">I er enige om:</div>
+          ${reasonsHtml}
         </div>
       </div>
     `;
@@ -417,6 +444,11 @@ async function showResults() {
   } else if (analysisEl) {
     analysisEl.innerHTML = '';
   }
+}
+
+function toggleMatchReasons(el) {
+  const reasons = el.querySelector('.match-reasons');
+  if (reasons) reasons.classList.toggle('hidden');
 }
 
 function shareResult() {
@@ -441,6 +473,7 @@ function shareResult() {
 
 function restart() {
   currentIndex = 0;
+  userChoices = [];
   Object.keys(candidates).forEach(p => scores[p] = 0);
   topResult = null;
   showScreen('splash');
