@@ -281,12 +281,56 @@
             color: var(--green);
         }
 
+        /* ── FILTER BAR ── */
+        .filter-bar {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.6rem 0.75rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .filter-btn {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.04em;
+            padding: 0.3rem 0.65rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--green-dim);
+            border-color: var(--green);
+            color: var(--green);
+        }
+        .filter-btn.active-red {
+            background: var(--red-dim);
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .filter-btn.active-blue {
+            background: var(--blue-dim);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
         /* ── POLICY LIST ── */
         .policy-panel {
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 0.75rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            align-content: start;
         }
         .policy-panel.hidden { display: none; }
 
@@ -294,12 +338,13 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 0.75rem;
-            padding: 0.85rem 1rem;
-            margin-bottom: 0.5rem;
+            padding: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .policy-card:hover { border-color: var(--border-focus); }
         .policy-card.selected {
@@ -315,17 +360,18 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         .policy-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             line-height: 1.35;
             flex: 1;
         }
         .policy-amount {
             font-family: 'DM Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 500;
             white-space: nowrap;
             padding: 0.2rem 0.5rem;
@@ -366,17 +412,17 @@
         }
 
         .policy-explanation {
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
+            margin-top: auto;
+            padding-top: 0.5rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
             line-height: 1.45;
-            display: none;
+            border-top: 1px solid var(--border);
         }
-        .policy-card.expanded .policy-explanation { display: block; }
 
         .policy-check {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 6px;
             border: 2px solid var(--border);
             display: flex;
@@ -384,7 +430,6 @@
             justify-content: center;
             flex-shrink: 0;
             transition: all 0.2s;
-            margin-top: 2px;
         }
         .policy-card.selected .policy-check {
             background: var(--green);
@@ -404,6 +449,12 @@
             transition: opacity 0.2s;
         }
         .policy-card.selected .policy-check svg { opacity: 1; }
+
+        @media (max-width: 400px) {
+            .policy-panel {
+                grid-template-columns: 1fr;
+            }
+        }
 
         /* ── SUBMIT BAR ── */
         .submit-bar {
@@ -715,24 +766,27 @@
 
     <!-- Tab Bar -->
     <div class="tab-bar">
-        <button class="tab-btn active" data-tab="invest" onclick="switchTab('invest')">
-            Investér <span class="tab-count" id="investCount">0</span>
-        </button>
-        <button class="tab-btn" data-tab="save" onclick="switchTab('save')">
-            Spar <span class="tab-count" id="saveCount">0</span>
+        <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">
+            Alle tiltag <span class="tab-count" id="allCount">0</span>
         </button>
         <button class="tab-btn" data-tab="mine" onclick="switchTab('mine')">
             Mine valg <span class="tab-count" id="mineCount">0</span>
         </button>
     </div>
 
+    <!-- Filter Bar -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" onclick="setFilter('all')">Alle</button>
+        <button class="filter-btn" onclick="setFilter('invest')">Koster penge</button>
+        <button class="filter-btn" onclick="setFilter('save')">Giver penge</button>
+    </div>
+
     <!-- Policy Panels -->
-    <div class="policy-panel" id="panelInvest"></div>
-    <div class="policy-panel hidden" id="panelSave"></div>
+    <div class="policy-panel" id="panelAll"></div>
     <div class="policy-panel hidden" id="panelMine">
         <div class="empty-state" id="mineEmpty">
             <div class="empty-state-icon">📋</div>
-            <div class="empty-state-text">Du har ikke valgt nogen tiltag endnu.<br>Gå til "Investér" eller "Spar" for at vælge.</div>
+            <div class="empty-state-text">Du har ikke valgt nogen tiltag endnu.<br>Tryk på et kort for at vælge det.</div>
         </div>
     </div>
 
@@ -806,29 +860,41 @@ function buildPolicies() {
     renderPolicies();
 }
 
-function renderPolicies() {
-    const investPolicies = allPolicies.filter(p => p.type === 'invest');
-    const savePolicies = allPolicies.filter(p => p.type === 'save');
+let currentFilter = 'all';
+let shuffledPolicies = [];
 
-    document.getElementById('panelInvest').innerHTML = renderPolicyList(investPolicies, 'invest');
-    document.getElementById('panelSave').innerHTML = renderPolicyList(savePolicies, 'save');
-    document.getElementById('investCount').textContent = investPolicies.length;
-    document.getElementById('saveCount').textContent = savePolicies.length;
+function renderPolicies() {
+    // Shuffle once on load
+    shuffledPolicies = [...allPolicies];
+    for (let i = shuffledPolicies.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledPolicies[i], shuffledPolicies[j]] = [shuffledPolicies[j], shuffledPolicies[i]];
+    }
+    document.getElementById('allCount').textContent = allPolicies.length;
+    renderFilteredPolicies();
 }
 
-function renderPolicyList(policies, type) {
-    // Shuffle policies randomly
-    const shuffled = [...policies];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
+function renderFilteredPolicies() {
+    const filtered = currentFilter === 'all'
+        ? shuffledPolicies
+        : shuffledPolicies.filter(p => p.type === currentFilter);
 
     let html = '';
-    for (const p of shuffled) {
+    for (const p of filtered) {
         html += renderPolicyCard(p);
     }
-    return html;
+    document.getElementById('panelAll').innerHTML = html;
+}
+
+function setFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach((btn, i) => {
+        btn.className = 'filter-btn';
+        if ((filter === 'all' && i === 0) || (filter === 'invest' && i === 1) || (filter === 'save' && i === 2)) {
+            btn.classList.add(filter === 'invest' ? 'active-red' : filter === 'save' ? 'active-blue' : 'active');
+        }
+    });
+    renderFilteredPolicies();
 }
 
 function renderPolicyCard(p) {
@@ -839,6 +905,7 @@ function renderPolicyCard(p) {
     const amountClass = isSaving ? 'save' : 'spend';
     const amountLabel = isSaving ? `+${amountStr}` : `−${amountStr}`;
     const selectedClass = isSelected ? (isSaving ? 'selected saving' : 'selected') : '';
+    const uncertaintyLabel = {høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed;
 
     return `
         <div class="policy-card ${selectedClass}" data-id="${p.id}" onclick="togglePolicy(${p.id})">
@@ -846,14 +913,12 @@ function renderPolicyCard(p) {
                 <div class="policy-check">
                     <svg viewBox="0 0 16 16"><polyline points="3,8 7,12 13,4" /></svg>
                 </div>
-                <div style="flex:1; margin-left: 0.6rem">
-                    <div class="policy-title">${p.emne}</div>
-                </div>
                 <div style="text-align: right; flex-shrink: 0;">
                     <div class="policy-amount ${amountClass}">${amountLabel} mia.</div>
-                    <div class="policy-uncertainty">${{høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed}</div>
+                    <div class="policy-uncertainty">${uncertaintyLabel}</div>
                 </div>
             </div>
+            <div class="policy-title">${p.emne}</div>
             <div class="policy-explanation">${p.forklaring}</div>
         </div>
     `;
@@ -927,7 +992,7 @@ function updateUI() {
         minePanel.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📋</div>
-                <div class="empty-state-text">Du har ikke valgt nogen tiltag endnu.<br>Gå til "Investér" eller "Spar" for at vælge.</div>
+                <div class="empty-state-text">Du har ikke valgt nogen tiltag endnu.<br>Tryk på et kort for at vælge det.</div>
             </div>`;
     } else {
         const mine = [...selected].map(id => allPolicies[id]);
@@ -935,11 +1000,11 @@ function updateUI() {
         const saving = mine.filter(p => p.amount <= 0);
         let html = '';
         if (spending.length) {
-            html += '<div class="category-header">Investeringer</div>';
+            html += '<div class="category-header" style="grid-column: 1/-1">Investeringer</div>';
             spending.forEach(p => { html += renderPolicyCard(p); });
         }
         if (saving.length) {
-            html += '<div class="category-header">Besparelser</div>';
+            html += '<div class="category-header" style="grid-column: 1/-1">Besparelser</div>';
             saving.forEach(p => { html += renderPolicyCard(p); });
         }
         minePanel.innerHTML = html;
@@ -958,9 +1023,9 @@ function updateUI() {
 
 function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.getElementById('panelInvest').classList.toggle('hidden', tab !== 'invest');
-    document.getElementById('panelSave').classList.toggle('hidden', tab !== 'save');
+    document.getElementById('panelAll').classList.toggle('hidden', tab !== 'all');
     document.getElementById('panelMine').classList.toggle('hidden', tab !== 'mine');
+    document.getElementById('filterBar').style.display = tab === 'all' ? 'flex' : 'none';
 }
 
 function startGame() {
@@ -1094,28 +1159,6 @@ function resetGame() {
     updateUI();
 }
 
-// Expand/collapse policy cards on second tap
-document.addEventListener('click', (e) => {
-    const card = e.target.closest('.policy-card');
-    if (!card) return;
-    // Toggle expanded on a small area
-    if (e.target.closest('.policy-explanation') || e.target.closest('.policy-meta')) {
-        card.classList.toggle('expanded');
-        e.stopPropagation();
-    }
-});
-
-// Make policy meta clickable to show explanation
-document.addEventListener('click', (e) => {
-    if (e.target.closest('.policy-uncertainty') || e.target.closest('.policy-party-tag')) {
-        const card = e.target.closest('.policy-card');
-        if (card) {
-            card.classList.toggle('expanded');
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }
-}, true);
 
 loadData();
 </script>
