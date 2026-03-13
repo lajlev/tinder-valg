@@ -327,32 +327,26 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 0.75rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            align-content: start;
         }
         .policy-panel.hidden { display: none; }
-
-        @media (max-width: 500px) {
-            .policy-panel { grid-template-columns: 1fr; }
+        .policy-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
         }
-
         .policy-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 0.85rem;
             padding: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            width: calc(50% - 0.3rem);
         }
-        .policy-card:hover { border-color: var(--border-focus); transform: translateY(-1px); }
-        .policy-card:active { transform: scale(0.98); }
+        @media (max-width: 500px) {
+            .policy-card { width: 100%; }
+        }
+        .policy-card:active { opacity: 0.85; }
         .policy-card.selected {
             border-color: var(--green);
             background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.06));
@@ -369,12 +363,14 @@
             align-items: center;
             justify-content: space-between;
             gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         .policy-title {
             font-size: 0.85rem;
             font-weight: 600;
             line-height: 1.4;
             color: var(--text);
+            margin-bottom: 0.4rem;
         }
         .policy-amount {
             font-family: 'DM Mono', monospace;
@@ -406,8 +402,8 @@
             color: var(--text-muted);
             line-height: 1.5;
             border-top: 1px solid var(--border);
-            padding-top: 0.5rem;
-            margin-top: auto;
+            padding-top: 0.4rem;
+            margin-top: 0.4rem;
         }
 
         .policy-check {
@@ -870,10 +866,11 @@ function renderFilteredPolicies() {
         ? shuffledPolicies
         : shuffledPolicies.filter(p => p.type === currentFilter);
 
-    let html = '';
+    let html = '<div class="policy-grid">';
     for (const p of filtered) {
         html += renderPolicyCard(p);
     }
+    html += '</div>';
     document.getElementById('panelAll').innerHTML = html;
 }
 
@@ -1032,12 +1029,16 @@ function updateUI() {
         const saving = mine.filter(p => p.amount <= 0);
         let html = '';
         if (spending.length) {
-            html += '<div class="category-header" style="grid-column: 1/-1">Investeringer</div>';
+            html += '<div class="category-header">Investeringer</div>';
+            html += '<div class="policy-grid">';
             spending.forEach(p => { html += renderPolicyCard(p); });
+            html += '</div>';
         }
         if (saving.length) {
-            html += '<div class="category-header" style="grid-column: 1/-1">Besparelser</div>';
+            html += '<div class="category-header">Besparelser</div>';
+            html += '<div class="policy-grid">';
             saving.forEach(p => { html += renderPolicyCard(p); });
+            html += '</div>';
         }
         minePanel.innerHTML = html;
     }
