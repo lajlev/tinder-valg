@@ -677,11 +677,18 @@
 
         /* ── ANIMATIONS ── */
         .budget-flash {
-            animation: budgetFlash 0.5s ease;
+            animation: budgetFlash 0.4s ease;
         }
         @keyframes budgetFlash {
             0%, 100% { transform: scale(1); }
-            30% { transform: scale(1.08); }
+            25% { transform: scale(1.12); }
+        }
+        .hud-stat-flash {
+            animation: statFlash 0.4s ease;
+        }
+        @keyframes statFlash {
+            0% { opacity: 0.5; transform: translateY(2px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         /* ── SCROLLBAR ── */
@@ -933,6 +940,21 @@ function togglePolicy(id) {
     updateUI();
 }
 
+let prevSpend = 0, prevSave = 0, prevNet = 0;
+
+function animateValue(el, from, to, duration, updateFn) {
+    if (from === to) return;
+    const start = performance.now();
+    function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+        const current = from + (to - from) * eased;
+        updateFn(current);
+        if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
 function updateUI() {
     // Update card states without re-rendering entire list
     document.querySelectorAll('.policy-card[data-id]').forEach(card => {
@@ -956,17 +978,41 @@ function updateUI() {
     }
     const net = totalSave - totalSpend;
 
-    // Update HUD
+    // Update HUD with animated counting
     const balEl = document.getElementById('hudBalance');
-    const netStr = (net >= 0 ? '+' : '') + net.toFixed(1).replace('.', ',') + ' mia. kr.';
-    balEl.textContent = netStr;
-    balEl.className = 'hud-balance ' + (net > 0 ? 'positive' : net < 0 ? 'negative' : 'neutral');
+    const spendEl = document.getElementById('hudSpend');
+    const saveEl = document.getElementById('hudSave');
+
+    animateValue(balEl, prevNet, net, 350, v => {
+        const s = (v >= 0 ? '+' : '') + v.toFixed(1).replace('.', ',') + ' mia. kr.';
+        balEl.textContent = s;
+        balEl.className = 'hud-balance ' + (v > 0.05 ? 'positive' : v < -0.05 ? 'negative' : 'neutral');
+    });
     balEl.classList.add('budget-flash');
-    setTimeout(() => balEl.classList.remove('budget-flash'), 500);
+    setTimeout(() => balEl.classList.remove('budget-flash'), 400);
+
+    animateValue(spendEl, prevSpend, totalSpend, 350, v => {
+        spendEl.textContent = v.toFixed(1).replace('.', ',');
+    });
+    animateValue(saveEl, prevSave, totalSave, 350, v => {
+        saveEl.textContent = v.toFixed(1).replace('.', ',');
+    });
+
+    // Flash the stat that changed
+    if (totalSpend !== prevSpend) {
+        spendEl.closest('.hud-stat').classList.add('hud-stat-flash');
+        setTimeout(() => spendEl.closest('.hud-stat').classList.remove('hud-stat-flash'), 400);
+    }
+    if (totalSave !== prevSave) {
+        saveEl.closest('.hud-stat').classList.add('hud-stat-flash');
+        setTimeout(() => saveEl.closest('.hud-stat').classList.remove('hud-stat-flash'), 400);
+    }
+
+    prevSpend = totalSpend;
+    prevSave = totalSave;
+    prevNet = net;
 
     document.getElementById('hudCount').textContent = selected.size;
-    document.getElementById('hudSpend').textContent = totalSpend.toFixed(1).replace('.', ',');
-    document.getElementById('hudSave').textContent = totalSave.toFixed(1).replace('.', ',');
 
     // Update bar
     const maxVal = Math.max(totalSpend, totalSave, 20);
@@ -1155,7 +1201,8 @@ function resetGame() {
     selected.clear();
     document.getElementById('resultsScreen').classList.remove('active');
     document.getElementById('gameScreen').classList.add('active');
-    switchTab('invest');
+    switchTab('all');
+    prevSpend = 0; prevSave = 0; prevNet = 0;
     updateUI();
 }
 
