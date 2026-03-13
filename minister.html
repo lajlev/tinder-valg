@@ -609,7 +609,8 @@
             gap: 0.5rem;
             margin-top: 1rem;
         }
-        .results-actions button {
+        .results-actions button,
+        .results-actions a {
             flex: 1;
             padding: 0.85rem;
             font-family: 'DM Mono', monospace;
@@ -621,8 +622,11 @@
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
         }
-        .results-actions button:active { transform: scale(0.97); }
+        .results-actions button:active,
+        .results-actions a:active { transform: scale(0.97); }
         .btn-primary { background: var(--green); color: #000; }
         .btn-secondary { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border) !important; }
 
@@ -797,7 +801,7 @@
     <div class="results-actions">
         <button class="btn-primary" onclick="shareResults()">Del resultat</button>
         <button class="btn-secondary" onclick="resetGame()">Prøv igen</button>
-        <a href="index.html" class="btn-secondary" style="text-align:center; text-decoration:none;">← Alle valgspil</a>
+        <a href="index.html" class="btn-secondary">← Alle valgspil</a>
     </div>
     <div class="share-toast" id="shareToast">Kopieret til udklipsholder!</div>
     <p style="text-align:center; font-size:0.7rem; color:var(--text-dim); margin-top:1rem; line-height:1.5;">
