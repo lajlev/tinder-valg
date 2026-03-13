@@ -219,7 +219,7 @@
           "forklaring": "Mål: frigøre 1,5 mia. kr. fra administration. Vanskeligt at verificere besparelsens realisme."
         },
         {
-          "emne": "✂️ Skattefordele og fradrag til høje indkomster",
+          "emne": "✂️ Begræns skattefordele og fradrag for høje indkomster",
           "estimat_mia_kr": -1.5,
           "usikkerhed": "høj",
           "forklaring": "Begrænsning af topskattepersoners fradrag. Provenu afhænger af konkret model."
@@ -527,7 +527,7 @@
           "forklaring": "Besparelse ved reducerede ydelser. Netto-omkostning ikke-vestlig indvandring: 27 mia. kr./år."
         },
         {
-          "emne": "🌿 Grøn omstilling af produktionserhverv",
+          "emne": "🌿 Fjern grønne krav til produktionserhverv",
           "estimat_mia_kr": -1,
           "usikkerhed": "høj",
           "forklaring": "Besparelse ved at fjerne/reducere grønne krav til erhverv. Konkret tal ikke offentliggjort."
@@ -579,7 +579,7 @@
           "forklaring": "Regulatorisk indgreb. Minimal direkte statsudgift; påvirker primært private udlejere."
         },
         {
-          "emne": "🛢️ Fossil energi og støtte til intensivt landbrug",
+          "emne": "🛢️ Fjern støtte til fossil energi og intensivt landbrug",
           "estimat_mia_kr": -2,
           "usikkerhed": "høj",
           "forklaring": "Fjerne fossile subsidier + skærpe landbrugsafgifter. Provenu afhænger af konkret model."
@@ -631,7 +631,7 @@
           "forklaring": "Højere CO2-afgifter giver øget provenu. Konkret model ikke præciseret."
         },
         {
-          "emne": "🌾 Støtte til intensivt landbrug med høj miljøbelastning",
+          "emne": "🌾 Fjern støtte til intensivt landbrug med høj miljøbelastning",
           "estimat_mia_kr": -1,
           "usikkerhed": "høj",
           "forklaring": "Omdirigering af landbrugsstøtte. EU CAP-midler: 5,3 mia. kr. Delvis omprioritering."

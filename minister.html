@@ -351,29 +351,68 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 0.85rem;
-            padding: 1rem;
             cursor: pointer;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, transform 0.15s;
             break-inside: avoid;
             margin-bottom: 0.6rem;
+            position: relative;
+            overflow: hidden;
         }
-        .policy-card.size-lg { padding: 1.25rem; }
-        .policy-card.size-lg .policy-title { font-size: 1rem; }
-        .policy-card.size-lg .policy-amount { font-size: 0.95rem; }
-        .policy-card.size-xl { padding: 1.5rem; }
-        .policy-card.size-xl .policy-title { font-size: 1.1rem; }
-        .policy-card.size-xl .policy-amount { font-size: 1.1rem; }
-        .policy-card:active { opacity: 0.85; }
+        .policy-card:hover { transform: translateY(-1px); }
+        .policy-card:active { transform: scale(0.97); opacity: 0.9; }
+
+        /* ── Size tiers based on amount ── */
+        .policy-card.size-xs { padding: 0.65rem 0.8rem; }
+        .policy-card.size-sm { padding: 0.85rem; }
+        .policy-card.size-md { padding: 1rem; }
+        .policy-card.size-lg { padding: 1.2rem 1.15rem; }
+        .policy-card.size-xl { padding: 1.4rem 1.3rem; }
+        .policy-card.size-xxl { padding: 1.6rem 1.4rem; }
+
+        .policy-card.size-xs .policy-title { font-size: 0.75rem; }
+        .policy-card.size-sm .policy-title { font-size: 0.8rem; }
+        .policy-card.size-md .policy-title { font-size: 0.88rem; }
+        .policy-card.size-lg .policy-title { font-size: 0.95rem; }
+        .policy-card.size-xl .policy-title { font-size: 1.05rem; }
+        .policy-card.size-xxl .policy-title { font-size: 1.15rem; font-weight: 700; }
+
+        .policy-card.size-xs .policy-amount { font-size: 0.65rem; padding: 0.15rem 0.4rem; }
+        .policy-card.size-sm .policy-amount { font-size: 0.7rem; }
+        .policy-card.size-md .policy-amount { font-size: 0.8rem; }
+        .policy-card.size-lg .policy-amount { font-size: 0.9rem; }
+        .policy-card.size-xl .policy-amount { font-size: 1rem; }
+        .policy-card.size-xxl .policy-amount { font-size: 1.2rem; padding: 0.3rem 0.7rem; }
+
+        .policy-card.size-xs .policy-explanation { font-size: 0.65rem; }
+        .policy-card.size-xxl .policy-explanation { font-size: 0.8rem; }
+
+        /* ── Amount accent stripe ── */
+        .policy-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--stripe-w, 3px);
+            height: 100%;
+            border-radius: 0.85rem 0 0 0.85rem;
+            background: var(--stripe-color, var(--border));
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .policy-card:hover::before { opacity: 1; }
+
+        /* ── Selected states ── */
         .policy-card.selected.spending {
             border-color: var(--red);
-            background: linear-gradient(135deg, var(--surface), rgba(239,68,68,0.06));
-            box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(239,68,68,0.1);
+            background: linear-gradient(135deg, var(--surface), rgba(239,68,68,0.08));
+            box-shadow: 0 0 0 1px var(--red), 0 4px 16px rgba(239,68,68,0.12);
         }
+        .policy-card.selected.spending::before { opacity: 1; }
         .policy-card.selected.saving {
             border-color: var(--green);
-            background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.06));
-            box-shadow: 0 0 0 1px var(--green), 0 4px 12px rgba(16,185,129,0.1);
+            background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.08));
+            box-shadow: 0 0 0 1px var(--green), 0 4px 16px rgba(16,185,129,0.12);
         }
+        .policy-card.selected.saving::before { opacity: 1; }
 
         .policy-header {
             display: flex;
@@ -585,10 +624,33 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        .rpc-match {
+        .rpc-sources-label {
+            font-size: 0.6rem;
             font-family: 'DM Mono', monospace;
-            font-size: 1.2rem;
-            font-weight: 500;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .rpc-sources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .rpc-source-link {
+            font-size: 0.65rem;
+            font-family: 'DM Mono', monospace;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.2rem 0.45rem;
+            border-radius: 0.25rem;
+            background: var(--surface-2);
+            transition: color 0.2s, background 0.2s;
+        }
+        .rpc-source-link:hover {
+            color: var(--green);
+            background: var(--green-glow);
         }
         .rpc-bar {
             height: 4px;
@@ -880,7 +942,8 @@ function buildPolicies() {
                 partiNavn: parti.navn,
                 bogstav: parti.bogstav,
                 topkandidat: parti.topkandidat,
-                titel: parti.titel
+                titel: parti.titel,
+                kilder: parti.kilder || []
             });
         }
     }
@@ -925,6 +988,22 @@ function setFilter(filter) {
     renderFilteredPolicies();
 }
 
+function getSizeClass(abs) {
+    if (abs >= 20) return 'size-xxl';
+    if (abs >= 10) return 'size-xl';
+    if (abs >= 5) return 'size-lg';
+    if (abs >= 2) return 'size-md';
+    if (abs >= 1) return 'size-sm';
+    return 'size-xs';
+}
+
+function getStripeWidth(abs) {
+    if (abs >= 20) return 6;
+    if (abs >= 10) return 5;
+    if (abs >= 5) return 4;
+    return 3;
+}
+
 function renderPolicyCard(p) {
     const isSelected = selected.has(p.id);
     const isSaving = p.amount <= 0;
@@ -934,11 +1013,13 @@ function renderPolicyCard(p) {
     const amountLabel = isSaving ? `+${amountStr}` : `−${amountStr}`;
     const typeClass = isSaving ? 'saving' : 'spending';
     const selectedClass = isSelected ? `selected ${typeClass}` : '';
-    const sizeClass = absAmount >= 15 ? 'size-xl' : absAmount >= 5 ? 'size-lg' : '';
+    const sizeClass = getSizeClass(absAmount);
+    const stripeW = getStripeWidth(absAmount);
+    const stripeColor = isSaving ? 'var(--green)' : 'var(--red)';
     const uncertaintyLabel = {høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed;
 
     return `
-        <div class="policy-card ${selectedClass} ${sizeClass}" data-id="${p.id}" onclick="togglePolicy(${p.id})">
+        <div class="policy-card ${selectedClass} ${sizeClass}" data-id="${p.id}" onclick="togglePolicy(${p.id})" style="--stripe-w:${stripeW}px;--stripe-color:${stripeColor}">
             <div class="policy-header">
                 <div class="policy-check">
                     <svg viewBox="0 0 16 16"><polyline points="3,8 7,12 13,4" /></svg>
@@ -988,8 +1069,7 @@ function updateUI() {
         const isSelected = selected.has(id);
         const isSaving = p.amount <= 0;
         const absAmount = Math.abs(p.amount);
-        const sizeClass = absAmount >= 15 ? ' size-xl' : absAmount >= 5 ? ' size-lg' : '';
-        card.className = 'policy-card' + sizeClass + (isSelected ? (isSaving ? ' selected saving' : ' selected spending') : '');
+        card.className = 'policy-card ' + getSizeClass(absAmount) + (isSelected ? (isSaving ? ' selected saving' : ' selected spending') : '');
     });
 
     // Calculate budget
@@ -1186,6 +1266,12 @@ function submitBudget() {
                 return `<span class="rpc-policy-tag ${isSpend ? 'spend-tag' : ''}"><span class="tag-name">${p.emne}</span><span class="tag-amount">${label}</span></span>`;
             }).join('');
 
+            const sourceLinks = (ps.party.kilder || []).map(url => {
+                let domain = url;
+                try { domain = new URL(url).hostname.replace('www.', ''); } catch(e) {}
+                return `<a href="${url}" target="_blank" rel="noopener" class="rpc-source-link">${domain}</a>`;
+            }).join('');
+
             card.innerHTML = `
                 <div class="rpc-top">
                     <div class="rpc-rank">#${i + 1}</div>
@@ -1193,11 +1279,11 @@ function submitBudget() {
                         <div class="rpc-name">${ps.party.bogstav} · ${ps.party.navn}</div>
                         <div class="rpc-candidate">${ps.party.topkandidat} — ${ps.party.titel}</div>
                     </div>
-                    <div class="rpc-match" style="color: ${pct > 60 ? 'var(--green)' : 'var(--text-muted)'}">${pct}%</div>
                 </div>
                 <div class="rpc-bar"><div class="rpc-bar-fill" style="width: 0%"></div></div>
                 <div class="rpc-shared-label">Fælles mærkesager (${ps.matchedPolicies.length})</div>
                 <div class="rpc-policies">${policyTags}</div>
+                ${sourceLinks ? `<div class="rpc-sources-label">Kilder</div><div class="rpc-sources">${sourceLinks}</div>` : ''}
             `;
             list.appendChild(card);
 
