@@ -6,16 +6,16 @@
     <meta name="theme-color" content="#0b0e17" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Budget Minister 2026</title>
+    <title>FinansMinister 2026</title>
     <meta name="description" content="Bliv finansminister for en dag – sammensæt dit eget budget for Danmark i 2026." />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Budget Minister 2026" />
+    <meta property="og:title" content="FinansMinister 2026" />
     <meta property="og:description" content="Bliv finansminister for en dag – sammensæt dit eget budget for Danmark i 2026." />
     <meta property="og:image" content="https://lajlev.github.io/tinder-valg/og-minister.png" />
     <meta property="og:url" content="https://lajlev.github.io/tinder-valg/minister.html" />
     <meta property="og:locale" content="da_DK" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Budget Minister 2026" />
+    <meta name="twitter:title" content="FinansMinister 2026" />
     <meta name="twitter:description" content="Bliv finansminister for en dag – sammensæt dit eget budget for Danmark i 2026." />
     <meta name="twitter:image" content="https://lajlev.github.io/tinder-valg/og-minister.png" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
@@ -341,9 +341,11 @@
         }
         .policy-panel.hidden { display: none; }
         .policy-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
+            columns: 2;
+            column-gap: 0.6rem;
+        }
+        @media (max-width: 500px) {
+            .policy-grid { columns: 1; }
         }
         .policy-card {
             background: var(--surface);
@@ -352,21 +354,25 @@
             padding: 1rem;
             cursor: pointer;
             transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-            width: calc(50% - 0.3rem);
+            break-inside: avoid;
+            margin-bottom: 0.6rem;
         }
-        @media (max-width: 500px) {
-            .policy-card { width: 100%; }
-        }
+        .policy-card.size-lg { padding: 1.25rem; }
+        .policy-card.size-lg .policy-title { font-size: 1rem; }
+        .policy-card.size-lg .policy-amount { font-size: 0.95rem; }
+        .policy-card.size-xl { padding: 1.5rem; }
+        .policy-card.size-xl .policy-title { font-size: 1.1rem; }
+        .policy-card.size-xl .policy-amount { font-size: 1.1rem; }
         .policy-card:active { opacity: 0.85; }
-        .policy-card.selected {
+        .policy-card.selected.spending {
+            border-color: var(--red);
+            background: linear-gradient(135deg, var(--surface), rgba(239,68,68,0.06));
+            box-shadow: 0 0 0 1px var(--red), 0 4px 12px rgba(239,68,68,0.1);
+        }
+        .policy-card.selected.saving {
             border-color: var(--green);
             background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.06));
             box-shadow: 0 0 0 1px var(--green), 0 4px 12px rgba(16,185,129,0.1);
-        }
-        .policy-card.selected.saving {
-            border-color: var(--blue);
-            background: linear-gradient(135deg, var(--surface), rgba(59,130,246,0.06));
-            box-shadow: 0 0 0 1px var(--blue), 0 4px 12px rgba(59,130,246,0.1);
         }
 
         .policy-header {
@@ -428,13 +434,13 @@
             flex-shrink: 0;
             transition: all 0.2s;
         }
-        .policy-card.selected .policy-check {
-            background: var(--green);
-            border-color: var(--green);
+        .policy-card.selected.spending .policy-check {
+            background: var(--red);
+            border-color: var(--red);
         }
         .policy-card.selected.saving .policy-check {
-            background: var(--blue);
-            border-color: var(--blue);
+            background: var(--green);
+            border-color: var(--green);
         }
         .policy-check svg {
             width: 14px;
@@ -445,7 +451,8 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-        .policy-card.selected .policy-check svg { opacity: 1; }
+        .policy-card.selected.spending .policy-check svg,
+        .policy-card.selected.saving .policy-check svg { opacity: 1; }
 
         /* ── SUBMIT BAR ── */
         .submit-bar {
@@ -596,19 +603,37 @@
             transition: width 1s ease;
         }
 
-        .rpc-policies {
-            margin-top: 0.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-        .rpc-policy-tag {
+        .rpc-shared-label {
             font-size: 0.6rem;
             font-family: 'DM Mono', monospace;
-            padding: 0.15rem 0.4rem;
-            border-radius: 0.25rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 0.6rem;
+            margin-bottom: 0.3rem;
+        }
+        .rpc-policies {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .rpc-policy-tag {
+            font-size: 0.7rem;
+            font-family: 'DM Mono', monospace;
+            padding: 0.35rem 0.5rem;
+            border-radius: 0.35rem;
             background: var(--green-glow);
             color: var(--green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .rpc-policy-tag .tag-name { flex: 1; }
+        .rpc-policy-tag .tag-amount {
+            white-space: nowrap;
+            font-weight: 500;
+            opacity: 0.8;
         }
         .rpc-policy-tag.spend-tag {
             background: var(--red-glow);
@@ -724,7 +749,7 @@
     <div class="splash-bg"></div>
     <div class="splash-grid"></div>
     <div class="splash-badge">Budgetsimulator 2026</div>
-    <div class="splash-title">Budget<span>Minister</span></div>
+    <div class="splash-title">Finans<span>Minister</span></div>
     <p class="splash-subtitle">
         Du er finansminister for en dag. Vælg hvilke mærkesager Danmark skal investere i &mdash; og hvor pengene skal komme fra. Se hvem der deler din vision.
     </p>
@@ -907,11 +932,13 @@ function renderPolicyCard(p) {
     const amountStr = absAmount.toFixed(1).replace('.', ',');
     const amountClass = isSaving ? 'save' : 'spend';
     const amountLabel = isSaving ? `+${amountStr}` : `−${amountStr}`;
-    const selectedClass = isSelected ? (isSaving ? 'selected saving' : 'selected') : '';
+    const typeClass = isSaving ? 'saving' : 'spending';
+    const selectedClass = isSelected ? `selected ${typeClass}` : '';
+    const sizeClass = absAmount >= 15 ? 'size-xl' : absAmount >= 5 ? 'size-lg' : '';
     const uncertaintyLabel = {høj: 'Beløb usikkert', middel: 'Beløb lidt usikkert', lav: 'Beløb ret sikkert'}[p.usikkerhed] || p.usikkerhed;
 
     return `
-        <div class="policy-card ${selectedClass}" data-id="${p.id}" onclick="togglePolicy(${p.id})">
+        <div class="policy-card ${selectedClass} ${sizeClass}" data-id="${p.id}" onclick="togglePolicy(${p.id})">
             <div class="policy-header">
                 <div class="policy-check">
                     <svg viewBox="0 0 16 16"><polyline points="3,8 7,12 13,4" /></svg>
@@ -960,7 +987,9 @@ function updateUI() {
         const p = allPolicies[id];
         const isSelected = selected.has(id);
         const isSaving = p.amount <= 0;
-        card.className = 'policy-card' + (isSelected ? (isSaving ? ' selected saving' : ' selected') : '');
+        const absAmount = Math.abs(p.amount);
+        const sizeClass = absAmount >= 15 ? ' size-xl' : absAmount >= 5 ? ' size-lg' : '';
+        card.className = 'policy-card' + sizeClass + (isSelected ? (isSaving ? ' selected saving' : ' selected spending') : '');
     });
 
     // Calculate budget
@@ -1152,7 +1181,9 @@ function submitBudget() {
 
             const policyTags = ps.matchedPolicies.map(p => {
                 const isSpend = p.amount > 0;
-                return `<span class="rpc-policy-tag ${isSpend ? 'spend-tag' : ''}">${p.emne.substring(0, 30)}${p.emne.length > 30 ? '…' : ''}</span>`;
+                const abs = Math.abs(p.amount).toFixed(1).replace('.', ',');
+                const label = isSpend ? `−${abs} mia.` : `+${abs} mia.`;
+                return `<span class="rpc-policy-tag ${isSpend ? 'spend-tag' : ''}"><span class="tag-name">${p.emne}</span><span class="tag-amount">${label}</span></span>`;
             }).join('');
 
             card.innerHTML = `
@@ -1165,6 +1196,7 @@ function submitBudget() {
                     <div class="rpc-match" style="color: ${pct > 60 ? 'var(--green)' : 'var(--text-muted)'}">${pct}%</div>
                 </div>
                 <div class="rpc-bar"><div class="rpc-bar-fill" style="width: 0%"></div></div>
+                <div class="rpc-shared-label">Fælles mærkesager (${ps.matchedPolicies.length})</div>
                 <div class="rpc-policies">${policyTags}</div>
             `;
             list.appendChild(card);
@@ -1191,7 +1223,7 @@ function shareResults() {
     const net = totalSave - totalSpend;
     const picks = [...selected].map(id => allPolicies[id].emne).join('\n• ');
 
-    const text = `🏛️ BudgetMinister 2026\n\nMit budget: ${net >= 0 ? '+' : ''}${net.toFixed(1)} mia. kr.\nInvestering: ${totalSpend.toFixed(1)} mia. | Besparelse: ${totalSave.toFixed(1)} mia.\n\nMine valg:\n• ${picks}\n\nPrøv selv: ${location.href}`;
+    const text = `🏛️ FinansMinister 2026\n\nMit budget: ${net >= 0 ? '+' : ''}${net.toFixed(1)} mia. kr.\nInvestering: ${totalSpend.toFixed(1)} mia. | Besparelse: ${totalSave.toFixed(1)} mia.\n\nMine valg:\n• ${picks}\n\nPrøv selv: ${location.href}`;
 
     navigator.clipboard.writeText(text).then(() => {
         const toast = document.getElementById('shareToast');

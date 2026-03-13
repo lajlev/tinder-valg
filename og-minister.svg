@@ -30,7 +30,7 @@
   <!-- Emoji -->
   <text x="600" y="260" text-anchor="middle" font-size="80" fill="#fff">🏛️</text>
   <!-- Title -->
-  <text x="600" y="350" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="64" fill="#ffffff">Budget<tspan fill="#10b981">Minister</tspan></text>
+  <text x="600" y="350" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="64" fill="#ffffff">Finans<tspan fill="#10b981">Minister</tspan></text>
   <text x="600" y="400" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="28" fill="#94a3b8">Valg 2026</text>
   <!-- Budget stats -->
   <g transform="translate(310, 430)">
