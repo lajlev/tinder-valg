@@ -783,25 +783,14 @@ function buildPolicies() {
     allPolicies = [];
     let id = 0;
     for (const parti of data.partier) {
-        for (const p of parti.flere_penge_paa) {
+        const allItems = [
+            ...parti.flere_penge_paa,
+            ...parti.faerre_penge_paa
+        ];
+        for (const p of allItems) {
             allPolicies.push({
                 id: id++,
-                type: 'invest',
-                emne: p.emne,
-                amount: p.estimat_mia_kr,
-                usikkerhed: p.usikkerhed,
-                forklaring: p.forklaring,
-                parti: parti.forkortelse,
-                partiNavn: parti.navn,
-                bogstav: parti.bogstav,
-                topkandidat: parti.topkandidat,
-                titel: parti.titel
-            });
-        }
-        for (const p of parti.faerre_penge_paa) {
-            allPolicies.push({
-                id: id++,
-                type: 'save',
+                type: p.estimat_mia_kr < 0 ? 'save' : 'invest',
                 emne: p.emne,
                 amount: p.estimat_mia_kr,
                 usikkerhed: p.usikkerhed,
