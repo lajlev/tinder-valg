@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#151520" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>KandidatTinder 26</title>
@@ -22,7 +22,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html { height: 100%; }
         body {
-            font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff;
+            font-family: 'Nunito', sans-serif; background: #151520; color: #fff;
             overflow-x: hidden; overflow-y: auto; height: 100%;
             font-size: 16px; -webkit-text-size-adjust: 100%;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -44,13 +44,14 @@
         .tinder-card {
             position: absolute; width: 100%; touch-action: none; cursor: grab;
             transition: none; will-change: transform;
+            user-select: none; -webkit-user-select: none;
         }
         .tinder-card.animating {
             transition: transform 0.4s ease, opacity 0.4s ease;
         }
         .tinder-card-inner {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 1rem; padding: 0;
             display: flex; flex-direction: row; align-items: stretch;
             position: relative; overflow: hidden; text-align: left;
@@ -65,8 +66,10 @@
             .game-hud { display: none; }
             .tinder-card-inner {
                 border-radius: 0; border: none; height: 100dvh;
+                flex-direction: column;
             }
-            .card-text { padding: 1.25rem; }
+            .card-photo { width: 100% !important; height: 35%; flex-shrink: 0; object-fit: contain; object-position: center; align-self: auto; background: #0a0a14; }
+            .card-text { padding: 1.25rem; flex: 1; overflow-y: auto; }
         }
         .overlay-like, .overlay-nope {
             position: absolute; inset: 0; border-radius: 1.5rem;
@@ -86,7 +89,7 @@
 
         .card-photo {
             width: 40%; object-fit: cover; align-self: stretch;
-            border-radius: 0; background: #1f2937; display: block; flex-shrink: 0;
+            border-radius: 0; background: #111; display: block; flex-shrink: 0;
         }
         .card-name {
             font-family: 'Baloo 2', 'Nunito', sans-serif;
@@ -148,12 +151,12 @@
         }
 
         .btn-done {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-            color: #94a3b8; font-weight: 700; font-size: 0.85rem;
-            padding: 0.6rem 1.25rem; border-radius: 0.75rem; cursor: pointer;
-            transition: all 0.2s;
+            background: #10b981; border: none;
+            color: #fff; font-weight: 800; font-size: 0.9rem;
+            padding: 0.7rem 1.5rem; border-radius: 0.75rem; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 2px 12px rgba(16,185,129,0.3);
         }
-        .btn-done:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+        .btn-done:hover { background: #059669; }
 
         /* === PROGRESS === */
         .progress-bar { height: 4px; background: #10b981; transition: width 0.3s ease; border-radius: 2px; }
@@ -471,7 +474,7 @@
                 <img class="card-photo" src="${card.billede}" alt="${card.navn}" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
                 <div class="card-text">
                     <div class="card-name">${card.navn}</div>
-                    <div class="card-parti-label">${card.parti} · <a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a></div>
+                    <div class="card-parti-label"><a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a></div>
                     <div class="card-policy-title">${title}</div>
                     ${body ? `<div class="card-policy-body">${body}</div>` : ''}
                     <div class="swipe-hint">
@@ -565,9 +568,7 @@
         // Effects
         playSwipeSound(isLike ? 'B' : 'A');
         spawnParticles(isLike);
-        if (isLike) {
-            flashScreen('rgba(16,185,129,0.15)');
-        }
+        flashScreen(isLike ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.1)');
         document.body.classList.add('shake');
         setTimeout(() => document.body.classList.remove('shake'), 400);
 
