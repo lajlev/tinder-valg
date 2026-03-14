@@ -68,7 +68,7 @@
                 border-radius: 0; border: none; height: 100dvh;
                 flex-direction: column;
             }
-            .card-photo { width: 100% !important; height: 35%; flex-shrink: 0; object-fit: contain; object-position: center; align-self: auto; background: #0a0a14; }
+            .card-photo { width: 100% !important; height: 45%; flex-shrink: 0; object-fit: contain; object-position: center; align-self: auto; background: #0a0a14; }
             .card-text { padding: 1.25rem; flex: 1; overflow-y: auto; }
         }
         .overlay-like, .overlay-nope {
@@ -336,8 +336,8 @@
             <button onclick="shareResult()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
                 Del dit resultat
             </button>
-            <button onclick="restart()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
-                Prøv igen
+            <button id="continueBtn" onclick="continueGame()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
+                Swipe videre
             </button>
         </div>
         <div id="shareMsg" class="text-green-400 text-sm mt-3 opacity-0 transition-opacity">
@@ -437,6 +437,12 @@
         showScreen('splash');
     }
 
+    function continueGame() {
+        if (currentIndex >= allCards.length) return;
+        showScreen('game');
+        renderCard();
+    }
+
     // === HUD ===
     function updateHUD() {
         document.getElementById('likedCount').textContent = likedPolicies.length;
@@ -473,8 +479,7 @@
                 <div class="overlay-nope">👎 NÆH</div>
                 <img class="card-photo" src="${card.billede}" alt="${card.navn}" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
                 <div class="card-text">
-                    <div class="card-name">${card.navn}</div>
-                    <div class="card-parti-label"><a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a></div>
+                    <div class="card-name"><a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a> ${card.navn}</div>
                     <div class="card-policy-title">${title}</div>
                     ${body ? `<div class="card-policy-body">${body}</div>` : ''}
                     <div class="swipe-hint">
@@ -651,6 +656,7 @@
         playResultFanfare();
         showScreen('results');
         document.getElementById('resultLikedCount').textContent = likedPolicies.length;
+        document.getElementById('continueBtn').style.display = currentIndex >= allCards.length ? 'none' : '';
 
         // Party results
         const resultsList = document.getElementById('resultsList');
