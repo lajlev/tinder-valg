@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>KandidatTinder 26</title>
+    <meta name="description" content="Swipe på mærkesager og find dit parti ved valget 2026." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="KandidatTinder 26 – Swipe dit parti" />
+    <meta property="og:description" content="Swipe på mærkesager og find dit parti ved valget 2026." />
+    <meta property="og:locale" content="da_DK" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗳️</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script defer src="https://umami.lillefar.com/script.js" data-website-id="c46d61e3-bd4d-46f9-9209-d6513206bcfd"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { height: 100%; }
+        body {
+            font-family: 'Nunito', sans-serif; background: #0a0a0a; color: #fff;
+            overflow-x: hidden; overflow-y: auto; height: 100%;
+            font-size: 16px; -webkit-text-size-adjust: 100%;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overscroll-behavior: none;
+        }
+        @media (min-width: 400px) { body { font-size: 18px; } }
+
+        .screen { display: none; min-height: 100dvh; }
+        .screen.active { display: flex; }
+
+        .splash-title {
+            font-family: 'Baloo 2', 'Nunito', sans-serif;
+            font-size: clamp(2.2rem, 10vw, 5rem);
+            line-height: 1;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
+        }
+
+        /* === TINDER CARD === */
+        .tinder-card {
+            position: absolute; width: 100%; touch-action: none; cursor: grab;
+            transition: none; will-change: transform;
+        }
+        .tinder-card.animating {
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .tinder-card-inner {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem; padding: 0;
+            display: flex; flex-direction: row; align-items: stretch;
+            position: relative; overflow: hidden; text-align: left;
+            min-height: 50vh;
+        }
+        .card-text {
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 2rem; flex: 1; min-width: 0;
+        }
+        .card-name, .card-parti-label, .card-policy-title, .card-policy-body { padding: 0; }
+        @media (max-width: 639px) {
+            .game-hud { display: none; }
+            .tinder-card-inner {
+                border-radius: 0; border: none; height: 100dvh;
+            }
+            .card-text { padding: 1.25rem; }
+        }
+        .overlay-like, .overlay-nope {
+            position: absolute; inset: 0; border-radius: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 900; opacity: 0; transition: opacity 0.1s;
+            pointer-events: none;
+        }
+        .overlay-like { background: rgba(16,185,129,0.3); }
+        .overlay-nope { background: rgba(239,68,68,0.3); }
+
+        .party-badge {
+            position: absolute; top: 1rem; right: 1rem;
+            font-size: 0.7rem; font-weight: 800;
+            padding: 0.25rem 0.6rem; border-radius: 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .card-photo {
+            width: 40%; object-fit: cover; align-self: stretch;
+            border-radius: 0; background: #1f2937; display: block; flex-shrink: 0;
+        }
+        .card-name {
+            font-family: 'Baloo 2', 'Nunito', sans-serif;
+            font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.15rem;
+            letter-spacing: -0.01em;
+        }
+        .card-parti-label {
+            font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 1rem;
+        }
+        .card-source-link {
+            color: #475569; text-decoration: underline; text-underline-offset: 2px;
+            font-weight: 600;
+        }
+        .card-source-link:hover { color: #94a3b8; }
+        .card-policy-title {
+            font-family: 'Baloo 2', 'Nunito', sans-serif;
+            font-size: 1.3rem; font-weight: 700; line-height: 1.3; color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+        .card-policy-body {
+            font-size: 0.9rem; font-weight: 600; line-height: 1.6; color: #94a3b8;
+            overflow: hidden;
+        }
+        @media (min-width: 640px) {
+            .card-name { font-size: 2.2rem; }
+            .card-parti-label { font-size: 1.1rem; }
+            .card-policy-title { font-size: 2rem; margin-bottom: 0.75rem; }
+            .card-policy-body { font-size: 1.15rem; line-height: 1.7; }
+        }
+
+        /* === BUTTONS === */
+        @media (max-width: 639px) {
+            .swipe-buttons { display: none !important; }
+        }
+        .btn-swipe {
+            flex: 1; padding: 1rem 1.25rem; border-radius: 1rem; font-weight: 800;
+            font-size: 1.15rem; transition: transform 0.1s, background 0.1s; cursor: pointer;
+            border: 2px solid; text-align: center; letter-spacing: 0.02em; min-height: 56px;
+        }
+        .btn-swipe:active { transform: scale(0.95); }
+
+        /* === SWIPE HINTS === */
+        .swipe-hint {
+            display: flex; justify-content: space-between; margin-top: auto;
+            pointer-events: none; opacity: 0.4; padding-top: 0.75rem;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .swipe-hint-left { color: #ef4444; }
+        .swipe-hint-right { color: #10b981; }
+        @media (min-width: 640px) { .swipe-hint { display: none; } }
+
+        /* === MOBILE DONE BUTTON === */
+        .mobile-done {
+            display: none; position: fixed; top: env(safe-area-inset-top, 0.75rem); right: 0.75rem;
+            z-index: 50;
+        }
+        @media (max-width: 639px) {
+            .mobile-done.visible { display: block; }
+        }
+
+        .btn-done {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+            color: #94a3b8; font-weight: 700; font-size: 0.85rem;
+            padding: 0.6rem 1.25rem; border-radius: 0.75rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-done:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+
+        /* === PROGRESS === */
+        .progress-bar { height: 4px; background: #10b981; transition: width 0.3s ease; border-radius: 2px; }
+        .counter { font-size: 0.75rem; font-weight: 700; color: #64748b; }
+        .counter strong { color: #10b981; }
+
+        /* === RESULTS === */
+        .result-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem; padding: 0.85rem 1rem;
+            animation: slideUp 0.5s ease forwards; opacity: 0;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .match-bar { height: 5px; border-radius: 3px; background: #1f2937; overflow: hidden; }
+        .match-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+        .ai-profile {
+            background: linear-gradient(145deg, #1a1020, #1e1228);
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 1rem; padding: 1.25rem; margin-top: 1rem;
+            animation: slideUp 0.6s ease forwards; opacity: 0;
+            animation-delay: 0.3s;
+        }
+        .ai-profile h3 {
+            font-size: 1rem; font-weight: 800; color: #a855f7; margin-bottom: 0.5rem;
+        }
+        .ai-profile p {
+            font-size: 0.9rem; color: #d1d5db; line-height: 1.6;
+        }
+
+        /* === SPINNER === */
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #333;
+            border-top-color: #10b981; border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === PARTICLES === */
+        .particle-container {
+            position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden;
+        }
+        .particle {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            animation: particleFly 0.8s ease-out forwards;
+        }
+        @keyframes particleFly {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot)); opacity: 0; }
+        }
+        .emoji-particle {
+            position: fixed; pointer-events: none; z-index: 101; font-size: 1.5rem;
+            animation: emojiBurst 1s ease-out forwards;
+        }
+        @keyframes emojiBurst {
+            0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(var(--rot)); opacity: 0; }
+        }
+        .screen-flash {
+            position: fixed; inset: 0; pointer-events: none; z-index: 99;
+            animation: flash 0.4s ease-out forwards;
+        }
+        @keyframes flash {
+            0% { opacity: 0.4; }
+            100% { opacity: 0; }
+        }
+        .shake { animation: shake 0.4s ease-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15% { transform: translateX(-6px) rotate(-1deg); }
+            30% { transform: translateX(5px) rotate(1deg); }
+            45% { transform: translateX(-4px); }
+            60% { transform: translateX(3px); }
+        }
+
+        /* === LIKED POLICIES LIST === */
+        .liked-tag {
+            display: inline-block; background: rgba(16,185,129,0.12); color: #34d399;
+            font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem; margin: 0.15rem;
+        }
+
+        /* === SAFE AREAS === */
+        .screen { overscroll-behavior: none; touch-action: pan-y; }
+        #game { overflow: hidden; touch-action: none; max-height: 100dvh; }
+        @media (max-width: 639px) { #game { padding: 0; } }
+        #results { overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: auto; height: 100dvh;
+            padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
+        }
+        #game .flex-1 { min-height: 0; }
+        #game > div:last-child {
+            padding-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+        }
+
+        /* Settings modal */
+        #settingsModal > div {
+            max-height: calc(100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SPLASH -->
+    <div id="splash" class="screen active flex-col items-center justify-center text-center px-6">
+        <div class="mb-4 sm:mb-8">
+            <div class="splash-title font-black tracking-tight mb-1" style="letter-spacing: -0.04em">
+                KANDIDAT<span class="text-emerald-500">TINDER</span>
+            </div>
+        </div>
+        <p class="text-lg sm:text-2xl text-gray-300 mb-6 sm:mb-10 max-w-sm leading-relaxed font-bold px-2">
+            Swipe på mærkesager.<br />Find dit parti.
+        </p>
+        <button onclick="startGame()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xl sm:text-2xl font-extrabold py-4 sm:py-5 px-10 sm:px-14 rounded-2xl transition-all active:scale-95 tracking-wide">
+            START
+        </button>
+        <p class="text-gray-500 text-sm sm:text-base mt-4 font-semibold">
+            Swipe højre = 💚 &nbsp; Swipe venstre = 👎
+        </p>
+        <div class="flex gap-4 mt-3">
+            <button id="soundToggle" onclick="toggleSound()" class="text-gray-600 hover:text-gray-400 text-xl transition-colors">🔇</button>
+            <button onclick="openSettings()" class="text-gray-600 hover:text-gray-400 text-sm underline transition-colors font-bold">
+                OpenAI-nøgle
+            </button>
+        </div>
+        <a href="index.html" class="text-gray-600 hover:text-gray-400 text-xs underline transition-colors font-bold mt-3">← Alle valgspil</a>
+        <p class="text-gray-600 text-xs mt-4 max-w-xs mx-auto leading-relaxed px-2">Mærkesager er baseret på partiernes officielle politik. Kun til underholdning.</p>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" class="screen flex-col items-center">
+        <div class="game-hud w-full px-4 pt-3 pb-1">
+            <div class="flex justify-between items-center mb-1">
+                <div class="counter"><strong id="likedCount">0</strong> liked · <span id="seenCount">0</span> set</div>
+                <button id="doneBtn" onclick="finishGame()" class="btn-done hidden">Se mit resultat →</button>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-1">
+                <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+        <button id="mobileDoneBtn" onclick="finishGame()" class="mobile-done btn-done">Se resultat →</button>
+        <div class="flex-1 w-full max-w-4xl mx-auto px-0 sm:px-4 flex items-center justify-center relative" id="cardContainer"></div>
+        <div class="swipe-buttons w-full max-w-4xl mx-auto px-4 pb-3 flex gap-3">
+            <button onclick="swipe('nope')" class="btn-swipe bg-transparent text-red-400 border-red-500/50 hover:bg-red-500/20 active:bg-red-500/30">
+                👎 Næh
+            </button>
+            <button onclick="swipe('like')" class="btn-swipe bg-transparent text-emerald-400 border-emerald-500/50 hover:bg-emerald-500/20 active:bg-emerald-500/30">
+                💚 Ja!
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="screen flex-col items-center justify-center text-center px-6">
+        <div class="spinner"></div>
+        <div class="text-2xl font-extrabold text-gray-300">Analyserer dine valg...</div>
+        <div class="text-gray-500 mt-2 text-lg font-semibold" id="loadingSubtext">Finder dit parti</div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results" class="screen flex-col items-center px-4 py-5">
+        <div class="text-3xl sm:text-4xl font-black mb-1 text-center" style="letter-spacing: -0.03em; font-family: 'Baloo 2', 'Nunito', sans-serif">
+            Dit <span class="text-emerald-500">Parti</span>match
+        </div>
+        <p class="text-gray-400 mb-4 text-center text-sm font-semibold">
+            Baseret på <span id="resultLikedCount">0</span> likede mærkesager
+        </p>
+        <div id="resultsList" class="w-full max-w-md space-y-2"></div>
+        <div id="aiProfile" class="w-full max-w-md"></div>
+        <div id="likedPolicies" class="w-full max-w-md mt-4"></div>
+        <div class="flex gap-3 w-full max-w-md mt-4">
+            <button onclick="shareResult()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
+                Del dit resultat
+            </button>
+            <button onclick="restart()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-extrabold text-lg py-4 px-6 rounded-xl transition-all active:scale-95">
+                Prøv igen
+            </button>
+        </div>
+        <div id="shareMsg" class="text-green-400 text-sm mt-3 opacity-0 transition-opacity">
+            Kopieret til udklipsholder!
+        </div>
+        <a href="index.html" class="text-gray-500 hover:text-gray-300 text-sm underline transition-colors font-bold mt-4">← Alle valgspil</a>
+        <p class="text-gray-600 text-xs mt-3 max-w-xs mx-auto leading-relaxed text-center">Mærkesager er baseret på partiernes officielle politik. Kun til underholdning.</p>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
+            <h2 class="text-xl font-bold mb-4">Indstillinger</h2>
+            <label class="text-sm text-gray-400 block mb-2">OpenAI API-nøgle</label>
+            <input id="apiKeyInput" type="password" placeholder="sk-..." class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white text-sm mb-2 focus:outline-none focus:border-emerald-500" />
+            <p class="text-xs text-gray-500 mb-4">
+                Med en nøgle får du en personlig AI-analyse af din politiske profil. Nøglen gemmes kun lokalt.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="saveSettings()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition-all">Gem</button>
+                <button onclick="closeSettings()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2.5 rounded-lg transition-all">Annuller</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="audio.js"></script>
+    <script src="kandidater-oestjylland-2.js"></script>
+    <script src="data-2026.js"></script>
+    <script>
+    // === STATE ===
+    let allCards = [];
+    let currentIndex = 0;
+    let likedPolicies = [];
+    let partyScores = {};
+    let partyData = null;
+    let isDragging = false;
+    let startX = 0, startY = 0, currentX = 0;
+
+    // Extract first sentence or first ~120 chars as title from mærkesag text
+    function extractTitle(text) {
+        const colonIdx = text.indexOf(':');
+        if (colonIdx > 0 && colonIdx < 60) return text.substring(0, colonIdx);
+        const dotIdx = text.indexOf('.');
+        if (dotIdx > 0 && dotIdx < 80) return text.substring(0, dotIdx);
+        return text.length > 60 ? text.substring(0, 57) + '...' : text;
+    }
+
+    // === INIT ===
+    function loadData() {
+        partyData = window.__data2026;
+        const rawKandidater = window.__kandidater || [];
+
+        // Build cards: one card per mærkesag per candidate, skip empty
+        allCards = [];
+        for (const k of rawKandidater) {
+            if (!k.maerkesager || k.maerkesager.length === 0) continue;
+            for (const m of k.maerkesager) {
+                if (!m || m.trim() === '') continue;
+                allCards.push({
+                    navn: k.navn,
+                    parti: k.parti,
+                    billede: k.billede,
+                    url: k.url,
+                    kreds: k.kreds,
+                    tekst: m
+                });
+            }
+        }
+        // Shuffle
+        for (let i = allCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
+        }
+    }
+
+    // === INIT SOUND ===
+    initSound();
+
+    // === SCREENS ===
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function startGame() {
+        playStartSound();
+        loadData();
+        currentIndex = 0;
+        likedPolicies = [];
+        partyScores = {};
+        showScreen('game');
+        updateHUD();
+        renderCard();
+    }
+
+    function restart() {
+        showScreen('splash');
+    }
+
+    // === HUD ===
+    function updateHUD() {
+        document.getElementById('likedCount').textContent = likedPolicies.length;
+        document.getElementById('seenCount').textContent = currentIndex;
+        const pct = allCards.length > 0 ? (currentIndex / allCards.length) * 100 : 0;
+        document.getElementById('progressBar').style.width = pct + '%';
+
+        const doneBtn = document.getElementById('doneBtn');
+        const mobileDoneBtn = document.getElementById('mobileDoneBtn');
+        if (currentIndex >= 10) {
+            doneBtn.classList.remove('hidden');
+            mobileDoneBtn.classList.add('visible');
+        }
+    }
+
+    // === CARD RENDERING ===
+    function renderCard() {
+        const container = document.getElementById('cardContainer');
+        container.innerHTML = '';
+
+        if (currentIndex >= allCards.length) {
+            finishGame();
+            return;
+        }
+
+        const card = allCards[currentIndex];
+        const title = extractTitle(card.tekst);
+        const body = card.tekst.length > title.length ? card.tekst.substring(title.length).replace(/^[:\s]+/, '') : '';
+        const el = document.createElement('div');
+        el.className = 'tinder-card';
+        el.innerHTML = `
+            <div class="tinder-card-inner">
+                <div class="overlay-like">💚 JA!</div>
+                <div class="overlay-nope">👎 NÆH</div>
+                <img class="card-photo" src="${card.billede}" alt="${card.navn}" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
+                <div class="card-text">
+                    <div class="card-name">${card.navn}</div>
+                    <div class="card-parti-label">${card.parti} · <a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a></div>
+                    <div class="card-policy-title">${title}</div>
+                    ${body ? `<div class="card-policy-body">${body}</div>` : ''}
+                    <div class="swipe-hint">
+                        <span class="swipe-hint-left">← 👎</span>
+                        <span class="swipe-hint-right">💚 →</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(el);
+        playCardAppear();
+
+        // Touch/mouse events
+        el.addEventListener('mousedown', onDragStart);
+        el.addEventListener('touchstart', onDragStart, { passive: true });
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+    }
+
+    // === DRAG / SWIPE ===
+    function onDragStart(e) {
+        isDragging = true;
+        const point = e.touches ? e.touches[0] : e;
+        startX = point.clientX;
+        startY = point.clientY;
+        currentX = 0;
+        const card = document.querySelector('.tinder-card');
+        if (card) card.style.transition = 'none';
+    }
+
+    function onDragMove(e) {
+        if (!isDragging) return;
+        const point = e.touches ? e.touches[0] : e;
+        currentX = point.clientX - startX;
+        const card = document.querySelector('.tinder-card');
+        if (!card) return;
+
+        const rotation = currentX * 0.08;
+        card.style.transform = `translateX(${currentX}px) rotate(${rotation}deg)`;
+
+        const overlayLike = card.querySelector('.overlay-like');
+        const overlayNope = card.querySelector('.overlay-nope');
+        const threshold = 60;
+
+        if (currentX > threshold) {
+            overlayLike.style.opacity = Math.min((currentX - threshold) / 80, 1);
+            overlayNope.style.opacity = 0;
+        } else if (currentX < -threshold) {
+            overlayNope.style.opacity = Math.min((-currentX - threshold) / 80, 1);
+            overlayLike.style.opacity = 0;
+        } else {
+            overlayLike.style.opacity = 0;
+            overlayNope.style.opacity = 0;
+        }
+    }
+
+    function onDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const card = document.querySelector('.tinder-card');
+        if (!card) return;
+
+        const threshold = 80;
+        if (currentX > threshold) {
+            animateSwipe(card, 'like');
+        } else if (currentX < -threshold) {
+            animateSwipe(card, 'nope');
+        } else {
+            card.style.transition = 'transform 0.3s ease';
+            card.style.transform = 'translateX(0) rotate(0)';
+        }
+    }
+
+    function swipe(direction) {
+        const card = document.querySelector('.tinder-card');
+        if (!card) return;
+        animateSwipe(card, direction);
+    }
+
+    function animateSwipe(card, direction) {
+        card.classList.add('animating');
+        const isLike = direction === 'like';
+        const tx = isLike ? window.innerWidth + 100 : -window.innerWidth - 100;
+        card.style.transform = `translateX(${tx}px) rotate(${isLike ? 30 : -30}deg)`;
+        card.style.opacity = '0';
+
+        // Effects
+        playSwipeSound(isLike ? 'B' : 'A');
+        spawnParticles(isLike);
+        if (isLike) {
+            flashScreen('rgba(16,185,129,0.15)');
+        }
+        document.body.classList.add('shake');
+        setTimeout(() => document.body.classList.remove('shake'), 400);
+
+        // Score
+        const currentCard = allCards[currentIndex];
+        if (isLike) {
+            likedPolicies.push(currentCard);
+            partyScores[currentCard.parti] = (partyScores[currentCard.parti] || 0) + 1;
+        }
+
+        currentIndex++;
+        updateHUD();
+
+        setTimeout(() => {
+            renderCard();
+        }, 350);
+    }
+
+    // === EFFECTS ===
+    function spawnParticles(isLike) {
+        const container = document.createElement('div');
+        container.className = 'particle-container';
+        document.body.appendChild(container);
+
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const color = isLike ? '#10b981' : '#ef4444';
+        const emojis = isLike ? ['💚', '✅', '👍', '🎉'] : ['👎', '❌', '💨'];
+
+        for (let i = 0; i < 8; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 80 + Math.random() * 120;
+            p.style.cssText = `left:${cx}px;top:${cy}px;width:${4+Math.random()*6}px;height:${4+Math.random()*6}px;background:${color};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;--rot:${Math.random()*360}deg`;
+            container.appendChild(p);
+        }
+
+        // Emoji burst
+        for (let i = 0; i < 3; i++) {
+            const e = document.createElement('div');
+            e.className = 'emoji-particle';
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 60 + Math.random() * 100;
+            e.style.cssText = `left:${cx}px;top:${cy}px;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;--rot:${Math.random()*360}deg`;
+            e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            container.appendChild(e);
+        }
+
+        setTimeout(() => container.remove(), 1200);
+    }
+
+    function flashScreen(color) {
+        const flash = document.createElement('div');
+        flash.className = 'screen-flash';
+        flash.style.background = color;
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 500);
+    }
+
+    // === FINISH ===
+    async function finishGame() {
+        showScreen('loading');
+        playGeneratingLoop();
+
+        // Calculate results
+        const sorted = Object.entries(partyScores).sort((a, b) => b[1] - a[1]);
+        const maxScore = sorted.length > 0 ? sorted[0][1] : 1;
+
+        // Try AI analysis
+        let aiAnalysis = null;
+        const apiKey = localStorage.getItem('openai_api_key');
+        if (apiKey && likedPolicies.length >= 3) {
+            document.getElementById('loadingSubtext').textContent = 'AI analyserer din profil...';
+            aiAnalysis = await getAIProfile(apiKey, likedPolicies, sorted, partyData);
+        }
+
+        // Show results
+        stopGeneratingLoop();
+        playResultFanfare();
+        showScreen('results');
+        document.getElementById('resultLikedCount').textContent = likedPolicies.length;
+
+        // Party results
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = '';
+        const top = sorted.slice(0, 5);
+
+        top.forEach(([partiNavn, score], i) => {
+            const pct = Math.round((score / maxScore) * 100);
+            const delay = i * 0.1;
+
+            const div = document.createElement('div');
+            div.className = 'result-card';
+            div.style.animationDelay = delay + 's';
+            div.innerHTML = `
+                <div class="flex items-center justify-between mb-1">
+                    <div>
+                        <div class="font-extrabold text-base">${partiNavn}</div>
+                        <div class="text-xs text-gray-500">${score} likede mærkesager</div>
+                    </div>
+                    <div class="text-2xl font-black text-emerald-400">${pct}%</div>
+                </div>
+                <div class="match-bar">
+                    <div class="match-fill" style="width: 0%; background: #10b981"></div>
+                </div>
+            `;
+            resultsList.appendChild(div);
+
+            setTimeout(() => {
+                div.querySelector('.match-fill').style.width = pct + '%';
+            }, 300 + i * 150);
+        });
+
+        // AI profile
+        const aiDiv = document.getElementById('aiProfile');
+        aiDiv.innerHTML = '';
+        if (aiAnalysis) {
+            aiDiv.innerHTML = `
+                <div class="ai-profile">
+                    <h3>🤖 Din politiske profil</h3>
+                    <p>${aiAnalysis}</p>
+                </div>
+            `;
+        }
+
+        // Liked policies summary
+        const likedDiv = document.getElementById('likedPolicies');
+        likedDiv.innerHTML = `
+            <div class="mt-2">
+                <div class="text-sm font-bold text-gray-400 mb-2">Dine likede mærkesager:</div>
+                <div class="flex flex-wrap gap-1">
+                    ${likedPolicies.map(p => `<span class="liked-tag">${extractTitle(p.tekst)} (${p.navn})</span>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // === AI PROFILE ===
+    async function getAIProfile(apiKey, liked, sorted, partyData) {
+        const likedText = liked.map(p => `- ${extractTitle(p.tekst)} (${p.navn}, ${p.parti})`).join('\n');
+        const topParties = sorted.slice(0, 5).map(([partiNavn, s]) => {
+            return `${partiNavn} (${s} likes)`;
+        }).join(', ');
+
+        const prompt = `En bruger har spillet "KandidatTinder" – et dansk politisk spil hvor man swiper på mærkesager fra de danske partier.
+
+Brugeren likede disse mærkesager:
+${likedText}
+
+Top-partier baseret på likes: ${topParties}
+
+Skriv en kort, personlig analyse (3-4 sætninger, på dansk) af brugerens politiske profil. Vær konkret om hvilke værdier og prioriteringer der driver dem. Undgå at være nedladende. Brug en engagerende og let humoristisk tone. Afslut med en anbefaling af hvilket parti der passer bedst.`;
+
+        try {
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.7,
+                    max_tokens: 300
+                })
+            });
+            const data = await res.json();
+            if (data.choices && data.choices[0]) {
+                return data.choices[0].message.content;
+            }
+        } catch (e) {
+            console.error('AI error:', e);
+        }
+        return null;
+    }
+
+    // === SHARE ===
+    function shareResult() {
+        const sorted = Object.entries(partyScores).sort((a, b) => b[1] - a[1]);
+        if (!sorted.length) return;
+        const [topParti] = sorted[0];
+        const text = `Jeg matchede med ${topParti} på KandidatTinder 26! Jeg likede ${likedPolicies.length} mærkesager. Hvem matcher du med?`;
+
+        if (navigator.share) {
+            navigator.share({ title: 'KandidatTinder 26', text }).catch(() => {});
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                const msg = document.getElementById('shareMsg');
+                msg.style.opacity = '1';
+                setTimeout(() => msg.style.opacity = '0', 2000);
+            });
+        }
+    }
+
+    // === SETTINGS ===
+    function openSettings() {
+        document.getElementById('settingsModal').classList.remove('hidden');
+        const key = localStorage.getItem('openai_api_key') || '';
+        document.getElementById('apiKeyInput').value = key;
+    }
+    function closeSettings() {
+        document.getElementById('settingsModal').classList.add('hidden');
+    }
+    function saveSettings() {
+        const key = document.getElementById('apiKeyInput').value.trim();
+        if (key) {
+            localStorage.setItem('openai_api_key', key);
+        } else {
+            localStorage.removeItem('openai_api_key');
+        }
+        closeSettings();
+    }
+    </script>
+</body>
+</html>

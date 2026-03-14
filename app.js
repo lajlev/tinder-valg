@@ -458,10 +458,10 @@ function shareResult() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const maxScore = sorted[0][1];
   const pct = Math.round((score / maxScore) * 100);
-  const text = `${c.emoji} Jeg fik ${pct}% match med ${c.name} (${c.party}) på Valg Tinder 26! Hvem er du?`;
+  const text = `${c.emoji} Jeg fik ${pct}% match med ${c.name} (${c.party}) på ValgDilemma 26! Hvem er du?`;
 
   if (navigator.share) {
-    navigator.share({ title: 'Valg Tinder 26', text }).catch(() => {});
+    navigator.share({ title: 'ValgDilemma 26', text }).catch(() => {});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
       const msg = document.getElementById('shareMsg');

@@ -1,0 +1,162 @@
+{
+  "storkreds": "Østjyllands Storkreds",
+  "beskrivelse": "Kandidater og deres mærkesager til brug i KandidatTinder. Mærkesager er hentet fra partiernes officielle politik.",
+  "kandidater": [
+    {
+      "parti": "Socialdemokratiet",
+      "bogstav": "A",
+      "farve": "#c0392b",
+      "emoji": "🌹",
+      "maerkesager": [
+        { "ikon": "🏫", "tekst": "Maks 24 elever i de mindste klasser", "beskrivelse": "Flere lærere og mindre klasser i folkeskolen, så alle børn får den opmærksomhed de fortjener." },
+        { "ikon": "👴", "tekst": "1.000 kr. ekstra til de fattigste pensionister", "beskrivelse": "150.000 pensionister med lavest indkomst skal have 1.000 kr. mere om måneden." },
+        { "ikon": "💰", "tekst": "Formueskat på de rigeste danskere", "beskrivelse": "De 22.000 rigeste skal betale en ny formueskat, der kan finansiere velfærd." },
+        { "ikon": "📋", "tekst": "Mindre bureaukrati i det offentlige", "beskrivelse": "2,5 mia. kr. skal spares ved at skære i administration og regler." },
+        { "ikon": "🏠", "tekst": "Fjern ejendomsværdiskat på billige boliger", "beskrivelse": "Boliger under 1 mio. kr. skal fritages for ejendomsværdiskat." }
+      ]
+    },
+    {
+      "parti": "Radikale Venstre",
+      "bogstav": "B",
+      "farve": "#e91e96",
+      "emoji": "💜",
+      "maerkesager": [
+        { "ikon": "☀️", "tekst": "Massiv grøn energiomstilling", "beskrivelse": "3 mia. kr. årligt til sol, vind, elektrificering og udbygning af elnettet." },
+        { "ikon": "🍎", "tekst": "Gratis skolemad og bedre daginstitutioner", "beskrivelse": "Kvalitetsløft af børnepasning og gratis mad i alle folkeskoler." },
+        { "ikon": "🎓", "tekst": "Stop nedskæringer på uddannelse", "beskrivelse": "Tilbagerul besparelser på universitetspladser og videregående uddannelser." },
+        { "ikon": "🧪", "tekst": "Nye afgifter på pesticider og sukker", "beskrivelse": "Sundere og grønnere forbrug via nye afgifter på usunde og miljøskadelige varer." },
+        { "ikon": "🌾", "tekst": "Landbrugsstøtte skal bruges på klima", "beskrivelse": "EU's landbrugsstøtte skal omdirigeres fra konventionelt landbrug til klimaindsats." }
+      ]
+    },
+    {
+      "parti": "Det Konservative Folkeparti",
+      "bogstav": "C",
+      "farve": "#00583c",
+      "emoji": "🟢",
+      "maerkesager": [
+        { "ikon": "🎖️", "tekst": "Markant oprustning af forsvaret", "beskrivelse": "15 mia. kr. mere årligt til forsvar og national sikkerhed." },
+        { "ikon": "⚛️", "tekst": "Atomkraft som del af energimixet", "beskrivelse": "Investér i atomkraft for stabil, CO2-fri energi i Danmark." },
+        { "ikon": "🏥", "tekst": "Flere penge til sundhed og ældrepleje", "beskrivelse": "2 mia. kr. ekstra til kernevelfærd – sundhed og ældreomsorg." },
+        { "ikon": "🏘️", "tekst": "Boligskattestop", "beskrivelse": "Stop stigningerne i boligskat, så familier kan blive i deres hjem." },
+        { "ikon": "📋", "tekst": "5,5 mia. sparet på offentlig administration", "beskrivelse": "Skær 6.500 årsværk i statslig administration og regulering." }
+      ]
+    },
+    {
+      "parti": "SF – Socialistisk Folkeparti",
+      "bogstav": "F",
+      "farve": "#d32f2f",
+      "emoji": "🔴",
+      "maerkesager": [
+        { "ikon": "👷", "tekst": "Tidlig pension for nedslidte", "beskrivelse": "Udvid Arne-pensionen så flere nedslidte kan gå tidligere på pension." },
+        { "ikon": "🤝", "tekst": "Fjern kontanthjælpsloftet", "beskrivelse": "Afskaf loftet over kontanthjælp – det rammer 40.000 børn." },
+        { "ikon": "👴", "tekst": "Højere ældrecheck", "beskrivelse": "1 mia. kr. ekstra til de pensionister der har mindst." },
+        { "ikon": "💰", "tekst": "Højere skat for de rigeste", "beskrivelse": "Ny formueskat og begrænsning af fradrag for høje indkomster." },
+        { "ikon": "📋", "tekst": "Fjern New Public Management", "beskrivelse": "Stop styringsvanviddet i det offentlige og frigør 1,5 mia. kr." }
+      ]
+    },
+    {
+      "parti": "Borgernes Parti",
+      "bogstav": "H",
+      "farve": "#1a237e",
+      "emoji": "⚖️",
+      "maerkesager": [
+        { "ikon": "⚖️", "tekst": "Forvaltningsdomstol mod systemovergreb", "beskrivelse": "Ny domstol der beskytter borgere mod fejl og overgreb fra det offentlige." },
+        { "ikon": "🚗", "tekst": "Afskaf registreringsafgiften", "beskrivelse": "Drop registreringsafgiften på biler – det koster 8 mia., men giver frihed." },
+        { "ikon": "📺", "tekst": "Gør DR frivilligt", "beskrivelse": "Fra tvungen licens til frivilligt abonnement – du bestemmer selv." },
+        { "ikon": "🌍", "tekst": "Stop tvungen udviklingsbistand", "beskrivelse": "Lad borgerne selv bestemme om de vil støtte udviklingsbistand." },
+        { "ikon": "📋", "tekst": "Mindre statslig kontrol", "beskrivelse": "Skær i bureaukrati og statslig overvågning af borgerne." }
+      ]
+    },
+    {
+      "parti": "Liberal Alliance",
+      "bogstav": "I",
+      "farve": "#0d47a1",
+      "emoji": "💙",
+      "maerkesager": [
+        { "ikon": "⚛️", "tekst": "Atomkraft – 6-8 reaktorer i Danmark", "beskrivelse": "120 mia. kr. over 15 år til stabil, CO2-fri atomkraft." },
+        { "ikon": "🎖️", "tekst": "Forsvar op til 3,5% af BNP", "beskrivelse": "Danmark skal bruge 3,5% af BNP på forsvar – langt over NATO-kravet." },
+        { "ikon": "💸", "tekst": "Markant lavere indkomstskat", "beskrivelse": "40-50 mia. kr. i skattelettelser – det skal kunne betale sig at arbejde." },
+        { "ikon": "💼", "tekst": "Bedre vilkår for iværksættere", "beskrivelse": "Lavere selskabsskat og færre regler for erhvervslivet." },
+        { "ikon": "✂️", "tekst": "Færre offentlige udgifter", "beskrivelse": "Reducér det offentlige forbrug med 15 mia. kr. for at finansiere skattelettelser." }
+      ]
+    },
+    {
+      "parti": "Moderaterne",
+      "bogstav": "M",
+      "farve": "#7b1fa2",
+      "emoji": "🟣",
+      "maerkesager": [
+        { "ikon": "🎖️", "tekst": "Støtte til NATO's 2%-mål for forsvar", "beskrivelse": "Danmark skal leve op til NATO's forsvarsmål med 5 mia. kr. ekstra." },
+        { "ikon": "🌐", "tekst": "Nem adgang til international arbejdskraft", "beskrivelse": "Hurtigere visumprocesser og rekruttering af udenlandsk talent." },
+        { "ikon": "💸", "tekst": "Lavere skat på arbejde", "beskrivelse": "10 mia. kr. i skattelettelser på arbejdsindkomst." },
+        { "ikon": "🔧", "tekst": "Afskaf Arne-pension og efterløn", "beskrivelse": "Erstat tidlig pension med en fleksibel deltidsordning." },
+        { "ikon": "⏳", "tekst": "Deltidspension i stedet for tidlig tilbagetrækning", "beskrivelse": "Ny fleksibel ordning så man kan trappe ned i stedet for at stoppe." }
+      ]
+    },
+    {
+      "parti": "Dansk Folkeparti",
+      "bogstav": "O",
+      "farve": "#1565c0",
+      "emoji": "🇩🇰",
+      "maerkesager": [
+        { "ikon": "🧓", "tekst": "6,5 mia. kr. ekstra til ældrepleje", "beskrivelse": "Markant løft af ældreplejen – flere varme hænder og bedre omsorg." },
+        { "ikon": "🚗", "tekst": "Brændstof under 10 kr. per liter", "beskrivelse": "Lavere afgifter så benzin og diesel aldrig overstiger 10 kr./l." },
+        { "ikon": "🛒", "tekst": "Halvér momsen på mad", "beskrivelse": "Madmomsen skal halveres så hverdagen bliver billigere for alle." },
+        { "ikon": "✈️", "tekst": "Remigration – hjemtagning af udlændinge", "beskrivelse": "Flere ikke-vestlige udlændinge skal hjemsendes med remigrationsydelser." },
+        { "ikon": "🇪🇺", "tekst": "Reducér Danmarks EU-bidrag", "beskrivelse": "Danmark betaler 13,5 mia. kr. årligt til EU – det er for meget." }
+      ]
+    },
+    {
+      "parti": "Venstre",
+      "bogstav": "V",
+      "farve": "#0054a6",
+      "emoji": "🔵",
+      "maerkesager": [
+        { "ikon": "🎖️", "tekst": "95 mia. kr. til nyt forsvar over 10 år", "beskrivelse": "Tungt brigadesystem og massiv oprustning af det danske forsvar." },
+        { "ikon": "💼", "tekst": "Bedre vækstvilkår for erhvervslivet", "beskrivelse": "Skattelettelser og regelforenkling for danske virksomheder." },
+        { "ikon": "👨‍👩‍👧‍👦", "tekst": "Omfordel ulandsbistand til velfærd", "beskrivelse": "Sænk ulandsbistand fra 0,7% til 0,5% og brug de 6 mia. kr. på børn og ældre." },
+        { "ikon": "📋", "tekst": "5,5 mia. kr. sparet på administration", "beskrivelse": "Skær 6.500 årsværk i statslig administration." },
+        { "ikon": "💸", "tekst": "Lavere selskabsskat", "beskrivelse": "Selskabsskat fra 22% til 20% for at styrke dansk konkurrencekraft." }
+      ]
+    },
+    {
+      "parti": "Danmarksdemokraterne",
+      "bogstav": "Æ",
+      "farve": "#00796b",
+      "emoji": "🏡",
+      "maerkesager": [
+        { "ikon": "🏢", "tekst": "Statslige arbejdspladser ud i hele Danmark", "beskrivelse": "10.000 offentlige arbejdspladser skal flyttes fra København til provinsen." },
+        { "ikon": "🏥", "tekst": "Nær sundhed til ældre uden for byerne", "beskrivelse": "1 mia. kr. til ældrepleje og lægerekruttering i landdistrikterne." },
+        { "ikon": "🚜", "tekst": "Fjern CO2-afgiften på landbrug", "beskrivelse": "Drop CO2-afgiften på landbrug og fiskeri – det truer dansk produktion." },
+        { "ikon": "🚧", "tekst": "Stram udlændingeydelser fra dag ét", "beskrivelse": "Reducér ydelser til ikke-vestlige udlændinge med det samme." },
+        { "ikon": "🌿", "tekst": "Fjern grønne krav til erhverv", "beskrivelse": "Drop overflødige grønne regler der bremser dansk produktion." }
+      ]
+    },
+    {
+      "parti": "Enhedslisten",
+      "bogstav": "Ø",
+      "farve": "#b71c1c",
+      "emoji": "✊",
+      "maerkesager": [
+        { "ikon": "🦷", "tekst": "Gratis tandlæge og medicin til alle", "beskrivelse": "12 mia. kr. til gratis tandpleje og receptpligtig medicin for alle danskere." },
+        { "ikon": "🚌", "tekst": "30% billigere busser og tog", "beskrivelse": "2,2 mia. kr. til at sænke priserne på kollektiv transport markant." },
+        { "ikon": "🏠", "tekst": "Billige almene boliger og huslejeloft", "beskrivelse": "Stop boligspekulanter med huslejeloft og byg flere almene boliger." },
+        { "ikon": "🛒", "tekst": "Nul moms på frugt og grønt", "beskrivelse": "Fjern momsen helt på frugt og grøntsager for sundere mad til alle." },
+        { "ikon": "🛢️", "tekst": "Stop støtte til fossil energi", "beskrivelse": "Fjern alle subsidier til olie, gas og intensivt landbrug." }
+      ]
+    },
+    {
+      "parti": "Alternativet",
+      "bogstav": "Å",
+      "farve": "#43a047",
+      "emoji": "🌱",
+      "maerkesager": [
+        { "ikon": "🐷", "tekst": "Bedre dyrevelfærd for produktionsdyr", "beskrivelse": "Skærpede krav til staldforhold og kontrol af griselandbrug." },
+        { "ikon": "☀️", "tekst": "Billigere kollektiv transport og elektrificering", "beskrivelse": "30% lavere priser på busser og tog, og flere elbusser." },
+        { "ikon": "💧", "tekst": "Rent drikkevand og mere natur", "beskrivelse": "Begræns gylleudledning og beskyt drikkevandet med en ny fond." },
+        { "ikon": "🧪", "tekst": "Forbyd pesticider og sprøjtemidler", "beskrivelse": "Reelt forbud mod farlige sprøjtemidler i dansk landbrug." },
+        { "ikon": "🌾", "tekst": "Stop støtte til intensivt landbrug", "beskrivelse": "Omdirigér landbrugsstøtte fra store forurenere til bæredygtige landbrug." }
+      ]
+    }
+  ]
+}

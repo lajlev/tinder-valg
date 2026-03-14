@@ -62,7 +62,7 @@ async function generateDilemmas() {
 
   const partyCodes = partyData.partier.map(p => p.forkortelse).join(', ');
 
-  const prompt = `Du er ekspert i dansk politik. Generér 25 politiske dilemmaer til en "Valg Tinder"-app for det danske valg 2026.
+  const prompt = `Du er ekspert i dansk politik. Generér 25 politiske dilemmaer til en "ValgDilemma"-app for det danske valg 2026.
 
 VIGTIGT REGEL: Hvert dilemma skal ALTID sammenligne to forslag fra SAMME kategori:
 - "flere_penge_paa" vs "flere_penge_paa" — to ting vi kan INVESTERE mere i (f.eks. "Byg atomkraftværker" vs "Gratis tandlæge til alle")
@@ -131,7 +131,7 @@ async function generateResultAnalysis(top5, userChoices) {
     return `${i + 1}. ${c.name} (${c.party}) - ${score} point`;
   }).join('\n');
 
-  const prompt = `En bruger har gennemført "Valg Tinder 26" - en dansk politisk quiz med 25 dilemmaer.
+  const prompt = `En bruger har gennemført "ValgDilemma 26" - en dansk politisk quiz med 25 dilemmaer.
 
 Resultater:
 ${top5Text}

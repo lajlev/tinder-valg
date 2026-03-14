@@ -53,6 +53,14 @@
             }
             .landing-screen.hidden { display: none; }
 
+            .game-cards-row {
+                display: flex; flex-direction: column; align-items: center; gap: 1rem;
+                width: 100%; max-width: 72rem; padding: 0 1rem;
+            }
+            @media (min-width: 768px) {
+                .game-cards-row { flex-direction: row; justify-content: center; align-items: stretch; gap: 1.25rem; }
+                .game-cards-row .landing-or { display: none; }
+            }
             .game-card {
                 width: 100%; max-width: 22rem;
                 border-radius: 1.25rem;
@@ -63,7 +71,10 @@
                 position: relative;
                 overflow: hidden;
                 text-decoration: none;
-                display: block;
+                display: flex; flex-direction: column;
+            }
+            @media (min-width: 768px) {
+                .game-card { flex: 1; max-width: none; }
             }
             .game-card:hover {
                 transform: translateY(-4px);
@@ -77,11 +88,17 @@
             }
             .game-card-tinder:hover { border-color: rgba(239,68,68,0.4); }
 
-            .game-card-minister {
-                background: linear-gradient(145deg, #0d1a1a, #101e24);
+            .game-card-kandidat {
+                background: linear-gradient(145deg, #0d1a20, #0e1e1a);
                 border: 1px solid rgba(16,185,129,0.2);
             }
-            .game-card-minister:hover { border-color: rgba(16,185,129,0.4); }
+            .game-card-kandidat:hover { border-color: rgba(16,185,129,0.4); }
+
+            .game-card-minister {
+                background: linear-gradient(145deg, #0d1a1a, #101e24);
+                border: 1px solid rgba(59,130,246,0.2);
+            }
+            .game-card-minister:hover { border-color: rgba(59,130,246,0.4); }
 
             .game-card-emoji {
                 font-size: 2.5rem;
@@ -120,12 +137,19 @@
             .game-card-tinder:hover .game-card-cta {
                 background: rgba(239,68,68,0.25);
             }
-            .game-card-minister .game-card-cta {
+            .game-card-kandidat .game-card-cta {
                 background: rgba(16,185,129,0.15);
                 color: #34d399;
             }
-            .game-card-minister:hover .game-card-cta {
+            .game-card-kandidat:hover .game-card-cta {
                 background: rgba(16,185,129,0.25);
+            }
+            .game-card-minister .game-card-cta {
+                background: rgba(59,130,246,0.15);
+                color: #60a5fa;
+            }
+            .game-card-minister:hover .game-card-cta {
+                background: rgba(59,130,246,0.25);
             }
 
             .game-card-badge {
@@ -142,13 +166,17 @@
                 background: rgba(239,68,68,0.12);
                 color: #f87171;
             }
-            .game-card-minister .game-card-badge {
+            .game-card-kandidat .game-card-badge {
                 background: rgba(16,185,129,0.12);
                 color: #34d399;
             }
+            .game-card-minister .game-card-badge {
+                background: rgba(59,130,246,0.12);
+                color: #60a5fa;
+            }
 
             .data-explainer {
-                max-width: 22rem;
+                max-width: 72rem; width: 100%;
                 background: rgba(255,255,255,0.03);
                 border: 1px solid rgba(255,255,255,0.06);
                 border-radius: 1rem;
@@ -195,33 +223,48 @@
                     VALG<span class="text-red-500">SPIL</span>26
                 </div>
                 <p class="text-gray-400 text-sm sm:text-base font-bold mt-2">
-                    To spil. 12 partier. Find dit match.
+                    Tre spil. 12 partier. Find dit match.
                 </p>
             </div>
 
-            <!-- Game Card: ValgtTinder -->
-            <a href="tinder.html" class="game-card game-card-tinder">
-                <span class="game-card-badge">Swipe</span>
-                <span class="game-card-emoji">🔥</span>
-                <div class="game-card-title">ValgTinder</div>
-                <div class="game-card-desc">
-                    25 politiske dilemmaer. Swipe og se hvilket parti der passer bedst til dig.
-                </div>
-                <span class="game-card-cta">Spil nu →</span>
-            </a>
+            <div class="game-cards-row">
+                <!-- Game Card: ValgDilemma -->
+                <a href="dilemma.html" class="game-card game-card-tinder">
+                    <span class="game-card-badge">Swipe</span>
+                    <span class="game-card-emoji">🔥</span>
+                    <div class="game-card-title">ValgDilemma</div>
+                    <div class="game-card-desc">
+                        25 politiske dilemmaer. Swipe og se hvilket parti der passer bedst til dig.
+                    </div>
+                    <span class="game-card-cta" style="margin-top:auto">Spil nu →</span>
+                </a>
 
-            <div class="landing-or">eller</div>
+                <div class="landing-or">eller</div>
 
-            <!-- Game Card: FinansMinister -->
-            <a href="minister.html" class="game-card game-card-minister">
-                <span class="game-card-badge">Budget</span>
-                <span class="game-card-emoji">🏛️</span>
-                <div class="game-card-title">FinansMinister</div>
-                <div class="game-card-desc">
-                    Du er finansminister for en dag. Prioritér mærkesager, styr budgettet og find dit parti.
-                </div>
-                <span class="game-card-cta">Lav dit budget →</span>
-            </a>
+                <!-- Game Card: KandidatTinder -->
+                <a href="kandidat.html" class="game-card game-card-kandidat">
+                    <span class="game-card-badge">Tinder</span>
+                    <span class="game-card-emoji">💚</span>
+                    <div class="game-card-title">KandidatTinder</div>
+                    <div class="game-card-desc">
+                        Swipe på mærkesager fra 12 partier. Stop når du vil og få din politiske profil.
+                    </div>
+                    <span class="game-card-cta" style="margin-top:auto">Swipe nu →</span>
+                </a>
+
+                <div class="landing-or">eller</div>
+
+                <!-- Game Card: FinansMinister -->
+                <a href="minister.html" class="game-card game-card-minister">
+                    <span class="game-card-badge">Budget</span>
+                    <span class="game-card-emoji">🏛️</span>
+                    <div class="game-card-title">FinansMinister</div>
+                    <div class="game-card-desc">
+                        Du er finansminister for en dag. Prioritér mærkesager, styr budgettet og find dit parti.
+                    </div>
+                    <span class="game-card-cta" style="margin-top:auto">Lav dit budget →</span>
+                </a>
+            </div>
 
             <!-- Data Explainer -->
             <div class="data-explainer">
