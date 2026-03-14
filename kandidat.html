@@ -68,7 +68,8 @@
                 border-radius: 0; border: none; height: 100dvh;
                 flex-direction: column;
             }
-            .card-photo { width: 100% !important; height: 45%; flex-shrink: 0; object-fit: contain; object-position: center; align-self: auto; background: #0a0a14; }
+            .card-photo-wrap { width: 100% !important; height: 45%; }
+            .card-photo { object-fit: contain; object-position: center; align-self: auto; background: #0a0a14; }
             .card-text { padding: 1.25rem; flex: 1; overflow-y: auto; }
         }
         .overlay-like, .overlay-nope {
@@ -91,19 +92,29 @@
             width: 40%; object-fit: cover; align-self: stretch;
             border-radius: 0; background: #111; display: block; flex-shrink: 0;
         }
+        .card-photo-wrap {
+            position: relative; flex-shrink: 0;
+            width: 40%;
+        }
+        .card-photo-wrap .card-photo {
+            width: 100%; height: 100%;
+        }
+        .card-name-row {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            display: flex; align-items: baseline; justify-content: space-between;
+            padding: 2.5rem 0.75rem 0.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
         .card-name {
             font-family: 'Baloo 2', 'Nunito', sans-serif;
-            font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.15rem;
+            font-size: 1.4rem; font-weight: 800; color: #fff;
             letter-spacing: -0.01em;
         }
-        .card-parti-label {
-            font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 1rem;
-        }
         .card-source-link {
-            color: #475569; text-decoration: underline; text-underline-offset: 2px;
-            font-weight: 600;
+            color: #94a3b8; text-decoration: underline; text-underline-offset: 2px;
+            font-weight: 600; font-size: 0.75rem;
         }
-        .card-source-link:hover { color: #94a3b8; }
+        .card-source-link:hover { color: #e2e8f0; }
         .card-policy-title {
             font-family: 'Baloo 2', 'Nunito', sans-serif;
             font-size: 1.3rem; font-weight: 700; line-height: 1.3; color: #e2e8f0;
@@ -477,9 +488,11 @@
             <div class="tinder-card-inner">
                 <div class="overlay-like">💚 JA!</div>
                 <div class="overlay-nope">👎 NÆH</div>
-                <img class="card-photo" src="${card.billede}" alt="${card.navn}" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
+                <div class="card-photo-wrap">
+                    <img class="card-photo" src="${card.billede}" alt="${card.navn}" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
+                    <div class="card-name-row"><span class="card-name">${card.navn}</span> <a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a></div>
+                </div>
                 <div class="card-text">
-                    <div class="card-name"><a href="${card.url}" target="_blank" rel="noopener" class="card-source-link">kilde</a> ${card.navn}</div>
                     <div class="card-policy-title">${title}</div>
                     ${body ? `<div class="card-policy-body">${body}</div>` : ''}
                     <div class="swipe-hint">
